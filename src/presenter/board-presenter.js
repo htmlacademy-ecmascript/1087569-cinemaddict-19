@@ -6,18 +6,20 @@ import MostCommentedView from '../view/most-commented-view.js';
 
 export default class BoardPresenter {
 
-  constructor ({boardComponent, boardContainer, filmsContainer, showMoreButtonContainer}) {
+  constructor ({boardComponent, boardContainer, filmsContainer, showMoreButtonContainer, filmsModel}) {
     this.boardComponent = boardComponent;
     this.boardContainer = boardContainer;
     this.filmsContainer = filmsContainer;
     this.showMoreButtonContainer = showMoreButtonContainer;
+    this.filmsModel = filmsModel;
   }
 
   init() {
-    render(this.boardComponent, this.boardContainer);
+    this.boardFilms = [...this.filmsModel.getFilms()];
 
-    for (let i = 0; i < 5; i++) {
-      render(new FilmCardView(), this.filmsContainer);
+    render(this.boardComponent, this.boardContainer);
+    for (let i = 0; i < this.boardFilms.length; i++) {
+      render(new FilmCardView({film: this.boardFilms[i]}), this.filmsContainer);
     }
 
     render(new ShowMoreButtonView(), this.showMoreButtonContainer);

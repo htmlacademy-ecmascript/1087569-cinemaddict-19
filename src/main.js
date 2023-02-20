@@ -6,7 +6,7 @@ import SortView from './view/sort-view.js';
 import FilmPopupView from './view/film-popup-view.js';
 import FilmsCountView from './view/films-count-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
-
+import FilmsModel from './model/films-model.js';
 
 const boardComponent = new BoardView();
 const mainContainer = document.querySelector('main');
@@ -15,11 +15,13 @@ const filmsContainer = boardComponent.getElement().querySelector('.films-list__c
 const showMoreButtonContainer = boardComponent.getElement().querySelector('.films-list');
 const filmsCountContainer = document.querySelector('.footer__statistics');
 const bodyContainer = document.querySelector('body');
+const filmsModel = new FilmsModel();
 const boardPresenter = new BoardPresenter({
   boardComponent: boardComponent,
   boardContainer: mainContainer,
   filmsContainer: filmsContainer,
-  showMoreButtonContainer: showMoreButtonContainer
+  showMoreButtonContainer: showMoreButtonContainer,
+  filmsModel
 });
 
 render(new UserProfileView(), headerContainer);
