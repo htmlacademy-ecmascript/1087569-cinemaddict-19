@@ -28,6 +28,6 @@ render(new UserProfileView(), headerContainer);
 render(new FilterView(), mainContainer);
 render(new SortView(), mainContainer);
 boardPresenter.init();
-render(new FilmPopupView(), bodyContainer);
+render(new FilmPopupView(filmsModel.getFilms()[0]), bodyContainer);
 render(new FilmsCountView(), filmsCountContainer);
 
