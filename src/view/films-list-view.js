@@ -1,17 +1,12 @@
 import { createElement } from '../render.js';
 
-const createBoardTemplate = () => (`
-  <section class="films">
-    <section class="films-list">
-    </section>
-  </section>`
-);
+const createFilmsListTemplate = () => '<div class="films-list__container"></div>';
 
-export default class BoardView {
+export default class FilmsListView {
   #element = null;
 
   get template() {
-    return createBoardTemplate();
+    return createFilmsListTemplate();
   }
 
   get element() {
