@@ -34,7 +34,10 @@ export default class BoardPresenter {
 
   init() {
     this.#boardFilms = [...this.#filmsModel.films];
+    this.#renderBoard();
+  }
 
+  #renderBoard() {
     if (this.#boardFilms.length === 0) {
       render(this.#boardComponent, this.#boardContainer);
       render(new ListEmptyView(true), this.#filmsListContainer, RenderPosition.AFTERBEGIN);
@@ -43,6 +46,7 @@ export default class BoardPresenter {
       render(this.#boardComponent, this.#boardContainer);
       render(this.#filmsListComponent, this.#filmsListContainer);
       render(new ListEmptyView(), this.#filmsListContainer, RenderPosition.AFTERBEGIN);
+
       for (let i = 0; i < Math.min(this.#boardFilms.length, FILM_COUNT_PER_STEP); i++) {
         this.#renderFilm(this.#boardFilms[i]);
       }
@@ -72,7 +76,7 @@ export default class BoardPresenter {
     }
   };
 
-  #renderFilm (film) {
+  #renderFilm(film) {
     const filmCardComponent = new FilmCardView({film});
     const filmPopupComponent = new FilmPopupView({film});
 
