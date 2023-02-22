@@ -3,7 +3,6 @@ import BoardView from './view/board-view.js';
 import UserProfileView from './view/user-profile-view.js';
 import FilterView from './view/filter-view.js';
 import SortView from './view/sort-view.js';
-import FilmPopupView from './view/film-popup-view.js';
 import FilmsCountView from './view/films-count-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FilmsModel from './model/films-model.js';
@@ -21,13 +20,13 @@ const boardPresenter = new BoardPresenter({
   boardContainer: mainContainer,
   filmsContainer: filmsContainer,
   showMoreButtonContainer: showMoreButtonContainer,
-  filmsModel
+  filmsModel,
+  bodyContainer: bodyContainer
 });
 
 render(new UserProfileView(), headerContainer);
 render(new FilterView(), mainContainer);
 render(new SortView(), mainContainer);
 boardPresenter.init();
-render(new FilmPopupView(filmsModel.films[0]), bodyContainer);
 render(new FilmsCountView(), filmsCountContainer);
 

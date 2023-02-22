@@ -1,3 +1,8 @@
 const COMMENT_EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 
-export { COMMENT_EMOTIONS };
+const Keys = {
+  ESCAPE: 'Escape',
+  ESC: 'Esc'
+};
+
+export { COMMENT_EMOTIONS, Keys };

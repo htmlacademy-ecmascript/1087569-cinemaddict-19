@@ -135,7 +135,7 @@ export default class FilmPopupView {
   #element = null;
   #film = null;
 
-  constructor(film) {
+  constructor({film}) {
     this.#film = film;
   }
 
