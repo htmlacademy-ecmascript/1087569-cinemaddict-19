@@ -11,8 +11,8 @@ import FilmsModel from './model/films-model.js';
 const boardComponent = new BoardView();
 const mainContainer = document.querySelector('main');
 const headerContainer = document.querySelector('header');
-const filmsContainer = boardComponent.getElement().querySelector('.films-list__container');
-const showMoreButtonContainer = boardComponent.getElement().querySelector('.films-list');
+const filmsContainer = boardComponent.element.querySelector('.films-list__container');
+const showMoreButtonContainer = boardComponent.element.querySelector('.films-list');
 const filmsCountContainer = document.querySelector('.footer__statistics');
 const bodyContainer = document.querySelector('body');
 const filmsModel = new FilmsModel();
@@ -28,6 +28,6 @@ render(new UserProfileView(), headerContainer);
 render(new FilterView(), mainContainer);
 render(new SortView(), mainContainer);
 boardPresenter.init();
-render(new FilmPopupView(filmsModel.getFilms()[0]), bodyContainer);
+render(new FilmPopupView(filmsModel.films[0]), bodyContainer);
 render(new FilmsCountView(), filmsCountContainer);
 
