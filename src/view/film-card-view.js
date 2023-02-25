@@ -28,13 +28,22 @@ const createFilmCardTemplate = (film) => {
 
 export default class FilmCardView extends AbstractView {
   #film = null;
+  #handleClick = null;
 
-  constructor({film}) {
+  constructor({film, onClick}) {
     super();
     this.#film = film;
+    this.#handleClick = onClick;
+
+    this.element.querySelector('a').addEventListener('click', this.#clickHandler);
   }
 
   get template() {
     return createFilmCardTemplate(this.#film);
   }
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleClick();
+  };
 }

@@ -52,9 +52,10 @@ export default class BoardPresenter {
       }
 
       if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
-        this.#showMoreButtonComponent = new ShowMoreButtonView();
+        this.#showMoreButtonComponent = new ShowMoreButtonView({
+          onClick: this.#handleShowMoreButtonClick
+        });
         render(this.#showMoreButtonComponent, this.#filmsListContainer);
-        this.#showMoreButtonComponent.element.addEventListener('click', this.#showMoreButtonClickHandler);
       }
 
       render(new TopRatedView(), this.#boardComponent.element);
@@ -62,8 +63,7 @@ export default class BoardPresenter {
     }
   }
 
-  #showMoreButtonClickHandler = (evt) => {
-    evt.preventDefault();
+  #handleShowMoreButtonClick = () => {
     this.#boardFilms
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilm(film));
@@ -77,36 +77,39 @@ export default class BoardPresenter {
   };
 
   #renderFilm(film) {
-    const filmCardComponent = new FilmCardView({film});
-    const filmPopupComponent = new FilmPopupView({film});
-
-    const replaceCardToPopup = () => {
-      this.#bodyContainer.classList.add('hide-overflow');
-      this.#bodyContainer.append(filmPopupComponent.element);
-    };
-
-    const replacePopupToCard = () => {
-      this.#bodyContainer.removeChild(filmPopupComponent.element);
-      this.#bodyContainer.classList.remove('hide-overflow');
-    };
-
     const escKeyDownHandler = (evt) => {
       if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
         evt.preventDefault();
-        replacePopupToCard();
+        replacePopupToCard.call(this);
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
 
-    filmCardComponent.element.querySelector('a').addEventListener('click', () => {
-      replaceCardToPopup();
-      document.addEventListener('keydown', escKeyDownHandler);
+    const filmCardComponent = new FilmCardView({
+      film,
+      onClick: () => {
+        replaceCardToPopup.call(this);
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
     });
 
-    filmPopupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', () => {
-      replacePopupToCard();
-      document.removeEventListener('keydown', escKeyDownHandler);
+    const filmPopupComponent = new FilmPopupView({
+      film,
+      onClick: () => {
+        replacePopupToCard.call(this);
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
     });
+
+    function replaceCardToPopup() {
+      this.#bodyContainer.classList.add('hide-overflow');
+      this.#bodyContainer.append(filmPopupComponent.element);
+    }
+
+    function replacePopupToCard() {
+      this.#bodyContainer.removeChild(filmPopupComponent.element);
+      this.#bodyContainer.classList.remove('hide-overflow');
+    }
 
     render(filmCardComponent, this.#filmsListComponent.element);
   }
