@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { formatDuration, formatReleaseFilm, formatCommentDate, getComments } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
 import { commentItems } from '../mock/film.js';
@@ -131,27 +131,15 @@ const createFilmPopupTemplate = (film) => {
   );
 };
 
-export default class FilmPopupView {
-  #element = null;
+export default class FilmPopupView extends AbstractView {
   #film = null;
 
   constructor({film}) {
+    super();
     this.#film = film;
   }
 
   get template() {
     return createFilmPopupTemplate(this.#film);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
