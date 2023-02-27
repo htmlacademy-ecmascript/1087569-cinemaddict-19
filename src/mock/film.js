@@ -83,7 +83,7 @@ const filmItems = [
       'description': getRandomArrayElement(DESCRIPTIONS)
     },
     'userDetails': {
-      'watchlist': false,
+      'watchlist': true,
       'alreadyWatched': true,
       'watchingDate': '2019-04-12T16:12:32.554Z',
       'favorite': false
@@ -123,7 +123,7 @@ const filmItems = [
       'watchlist': false,
       'alreadyWatched': true,
       'watchingDate': '2019-04-12T16:12:32.554Z',
-      'favorite': false
+      'favorite': true
     }
   },
   {
@@ -158,7 +158,7 @@ const filmItems = [
     },
     'userDetails': {
       'watchlist': false,
-      'alreadyWatched': true,
+      'alreadyWatched': false,
       'watchingDate': '2019-04-12T16:12:32.554Z',
       'favorite': false
     }

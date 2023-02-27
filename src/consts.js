@@ -6,10 +6,10 @@ const Keys = {
 };
 
 const FilterType = {
-  ALL: 'all movies',
-  WATCHLIST: 'watchlist',
-  HISTORY: 'history',
-  FAVORITES: 'favorites'
+  ALL: 'All movies',
+  WATCHLIST: 'Watchlist',
+  HISTORY: 'History',
+  FAVORITES: 'Favorites'
 };
 
 export { COMMENT_EMOTIONS, Keys, FilterType };

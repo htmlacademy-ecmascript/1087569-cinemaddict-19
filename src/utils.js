@@ -38,13 +38,11 @@ const filter = {
   [FilterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite)
 };
 
-const generateFilter = (tasks) => {
-  Object.entries(filter).map(
-    ([filterName, filterTasks]) => ({
-      name: filterName,
-      count: filterTasks(tasks).length,
-    })
-  );
-};
+const generateFilter = (films) => Object.entries(filter).map(
+  ([filterName, filterFilms]) => ({
+    name: filterName,
+    count: filterFilms(films).length,
+  })
+);
 
 export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter };
