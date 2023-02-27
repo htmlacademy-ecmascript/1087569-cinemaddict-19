@@ -5,4 +5,11 @@ const Keys = {
   ESC: 'Esc'
 };
 
-export { COMMENT_EMOTIONS, Keys };
+const FilterType = {
+  ALL: 'all movies',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites'
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType };

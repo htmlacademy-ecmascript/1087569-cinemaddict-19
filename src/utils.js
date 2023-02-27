@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { FilterType } from './consts';
 
 const DATE_YEAR_FORMAT = 'YYYY';
 const DATE_RELEASE_FORMAT = 'D MMMM YYYY';
@@ -30,4 +31,20 @@ const formatDuration = (duration) => {
 
 const getComments = (commentItems, commentIds) => commentItems.filter((item) => commentIds.includes(item.id));
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate };
+const filter = {
+  [FilterType.ALL]: (films) => films,
+  [FilterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
+  [FilterType.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
+  [FilterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite)
+};
+
+const generateFilter = (tasks) => {
+  Object.entries(filter).map(
+    ([filterName, filterTasks]) => ({
+      name: filterName,
+      count: filterTasks(tasks).length,
+    })
+  );
+};
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter };
