@@ -84,7 +84,8 @@ export default class BoardPresenter {
   #renderFilm(film) {
     const filmPresenter = new FilmPresenter({
       filmsListContainer: this.#filmsListComponent.element,
-      bodyContainer: this.#bodyContainer
+      bodyContainer: this.#bodyContainer,
+      onDataChange: this.#handleFilmChange
     });
 
     filmPresenter.init(film);
