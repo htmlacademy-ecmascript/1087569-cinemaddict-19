@@ -112,7 +112,7 @@ const createFilmPopupTemplate = (film) => {
 
           <section class="film-details__controls">
             <button type="button" class="film-details__control-button film-details__control-button--watchlist ${userDetails.watchlist ? 'film-card__controls-item--active' : ''}" id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched ${userDetails.watched ? 'film-card__controls-item--active' : ''}" id="watched" name="watched">Already watched</button>
+            <button type="button" class="film-details__control-button film-details__control-button--active film-details__control-button--watched ${userDetails.alreadyWatched ? 'film-card__controls-item--active' : ''}" id="watched" name="watched">Already watched</button>
             <button type="button" class="film-details__control-button film-details__control-button--favorite ${userDetails.favorite ? 'film-card__controls-item--active' : ''}" id="favorite" name="favorite">Add to favorites</button>
           </section>
         </div>

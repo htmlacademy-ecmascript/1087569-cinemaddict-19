@@ -101,14 +101,38 @@ export default class FilmPresenter {
   };
 
   #handleWatchlistClick = () => {
-    this.#handleDataChange({...this.#film, watchlist: !this.#film.userDetails.watchlist});
+    this.#handleDataChange({
+      ...this.#film,
+      userDetails: {
+        watchlist: !this.#film.userDetails.watchlist,
+        alreadyWatched: this.#film.userDetails.alreadyWatched,
+        watchingDate: this.#film.userDetails.watchingDate,
+        favorite: this.#film.userDetails.favorite
+      }
+    });
   };
 
   #handleWatchedClick = () => {
-    this.#handleDataChange({...this.#film, alreadyWatched: !this.#film.userDetails.alreadyWatched});
+    this.#handleDataChange({
+      ...this.#film,
+      userDetails: {
+        watchlist: this.#film.userDetails.watchlist,
+        alreadyWatched: !this.#film.userDetails.alreadyWatched,
+        watchingDate: this.#film.userDetails.watchingDate,
+        favorite: this.#film.userDetails.favorite
+      }
+    });
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#film, favorite: !this.#film.userDetails.favorite});
+    this.#handleDataChange({
+      ...this.#film,
+      userDetails: {
+        watchlist: this.#film.userDetails.watchlist,
+        alreadyWatched: this.#film.userDetails.alreadyWatched,
+        watchingDate: this.#film.userDetails.watchingDate,
+        favorite: !this.#film.userDetails.favorite
+      }
+    });
   };
 }
