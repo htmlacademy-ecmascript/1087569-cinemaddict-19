@@ -85,7 +85,8 @@ export default class BoardPresenter {
     const filmPresenter = new FilmPresenter({
       filmsListContainer: this.#filmsListComponent.element,
       bodyContainer: this.#bodyContainer,
-      onDataChange: this.#handleFilmChange
+      onDataChange: this.#handleFilmChange,
+      onModeChange: this.#handleModeChange
     });
 
     filmPresenter.init(film);
@@ -102,6 +103,10 @@ export default class BoardPresenter {
   #handleFilmChange = (updatedFilm) => {
     this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
     this.#filmPresenters.get(updatedFilm.id).init(updatedFilm);
+  };
+
+  #handleModeChange = () => {
+    this.#filmPresenters.forEach((presenter) => presenter.resetView());
   };
 
   #handleShowMoreButtonClick = () => {

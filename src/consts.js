@@ -12,4 +12,9 @@ const FilterType = {
   FAVORITES: 'Favorites'
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType };
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType, Mode };

@@ -1,7 +1,7 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import { Keys } from '../consts.js';
+import { Keys, Mode } from '../consts.js';
 
 export default class FilmPresenter {
   #filmsListContainer = null;
@@ -9,12 +9,15 @@ export default class FilmPresenter {
   #filmCardComponent = null;
   #filmPopupComponent = null;
   #film = null;
+  #mode = Mode.DEFAULT;
   #handleDataChange = null;
+  #handleModeChange = null;
 
-  constructor({filmsListContainer, bodyContainer, onDataChange}) {
+  constructor({filmsListContainer, bodyContainer, onDataChange, onModeChange}) {
     this.#filmsListContainer = filmsListContainer;
     this.#bodyContainer = bodyContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(film) {
@@ -43,16 +46,22 @@ export default class FilmPresenter {
       return;
     }
 
-    if (this.#filmsListContainer.contains(prevFilmCardComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#filmCardComponent, prevFilmCardComponent);
     }
 
-    if (this.#bodyContainer.contains(prevFilmPopupComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
     }
 
     remove(prevFilmCardComponent);
     remove(prevFilmPopupComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#removePopup();
+    }
   }
 
   destroy() {
@@ -64,12 +73,15 @@ export default class FilmPresenter {
     this.#bodyContainer.classList.add('hide-overflow');
     this.#bodyContainer.append(this.#filmPopupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #removePopup() {
     this.#bodyContainer.removeChild(this.#filmPopupComponent.element);
     this.#bodyContainer.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {

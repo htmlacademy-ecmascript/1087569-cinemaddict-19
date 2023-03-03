@@ -53,7 +53,6 @@ const commentItems = [
 
 const filmItems = [
   {
-    'id': '0',
     'comments': [
       '1', '2', '3'
     ],
@@ -91,7 +90,6 @@ const filmItems = [
     }
   },
   {
-    'id': '1',
     'comments': [
       '2', '3'
     ],
@@ -128,7 +126,6 @@ const filmItems = [
     }
   },
   {
-    'id': '0',
     'comments': [
       '3'
     ],
