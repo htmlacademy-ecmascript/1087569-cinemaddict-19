@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
 import { Keys } from '../consts.js';
@@ -18,6 +18,9 @@ export default class FilmPresenter {
   init(film) {
     this.#film = film;
 
+    const prevFilmCardComponent = this.#filmCardComponent;
+    const prevFilmPopupComponent = this.#filmPopupComponent;
+
     this.#filmCardComponent = new FilmCardView({
       film: this.#film,
       onClick: this.#handleCardClick
@@ -27,7 +30,26 @@ export default class FilmPresenter {
       onClick: this.#handlePopupClick
     });
 
-    render(this.#filmCardComponent, this.#filmsListContainer);
+    if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
+      render(this.#filmCardComponent, this.#filmsListContainer);
+      return;
+    }
+
+    if (this.#filmsListContainer.contains(prevFilmCardComponent.element)) {
+      replace(this.#filmCardComponent, prevFilmCardComponent);
+    }
+
+    if (this.#bodyContainer.contains(prevFilmPopupComponent.element)) {
+      replace(this.#filmPopupComponent, prevFilmPopupComponent);
+    }
+
+    remove(prevFilmCardComponent);
+    remove(prevFilmPopupComponent);
+  }
+
+  destroy() {
+    remove(this.#filmCardComponent);
+    remove(this.#filmPopupComponent);
   }
 
   #addPopup() {
