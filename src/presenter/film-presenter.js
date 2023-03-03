@@ -51,11 +51,9 @@ export default class FilmPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
+      replace(this.#filmCardComponent, prevFilmCardComponent);
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
     }
-
-    remove(prevFilmCardComponent);
-    remove(prevFilmPopupComponent);
   }
 
   resetView() {
@@ -87,6 +85,7 @@ export default class FilmPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
       evt.preventDefault();
+      this.#handleDataChange(this.#film);
       this.#removePopup();
     }
   };
@@ -104,10 +103,8 @@ export default class FilmPresenter {
     this.#handleDataChange({
       ...this.#film,
       userDetails: {
+        ...this.#film.userDetails,
         watchlist: !this.#film.userDetails.watchlist,
-        alreadyWatched: this.#film.userDetails.alreadyWatched,
-        watchingDate: this.#film.userDetails.watchingDate,
-        favorite: this.#film.userDetails.favorite
       }
     });
   };
@@ -116,10 +113,8 @@ export default class FilmPresenter {
     this.#handleDataChange({
       ...this.#film,
       userDetails: {
-        watchlist: this.#film.userDetails.watchlist,
-        alreadyWatched: !this.#film.userDetails.alreadyWatched,
-        watchingDate: this.#film.userDetails.watchingDate,
-        favorite: this.#film.userDetails.favorite
+        ...this.#film.userDetails,
+        alreadyWatched: !this.#film.userDetails.alreadyWatched
       }
     });
   };
@@ -128,9 +123,7 @@ export default class FilmPresenter {
     this.#handleDataChange({
       ...this.#film,
       userDetails: {
-        watchlist: this.#film.userDetails.watchlist,
-        alreadyWatched: this.#film.userDetails.alreadyWatched,
-        watchingDate: this.#film.userDetails.watchingDate,
+        ...this.#film.userDetails,
         favorite: !this.#film.userDetails.favorite
       }
     });
