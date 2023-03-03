@@ -6,6 +6,7 @@ import MostCommentedView from '../view/most-commented-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
+import { updateItem } from '../utils.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -96,6 +97,11 @@ export default class BoardPresenter {
     this.#renderedFilmCount = FILM_COUNT_PER_STEP;
     remove(this.#showMoreButtonComponent);
   }
+
+  #handleFilmChange = (updatedFilm) => {
+    this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
+    this.#filmPresenters.get(updatedFilm.id).init(updatedFilm);
+  };
 
   #handleShowMoreButtonClick = () => {
     this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
