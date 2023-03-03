@@ -1,5 +1,6 @@
 import { getRandomArrayElement, getRandomNumber } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
+import { nanoid } from 'nanoid';
 
 const COMMENT_AUTHORS = ['Johnny Depp', 'Al Pacino', 'Robert De Niro', 'Kevin Spacey', 'Russell Crowe', 'Angelina Jolie'];
 const POSTERS = [
@@ -165,6 +166,11 @@ const filmItems = [
   }
 ];
 
-const getFilm = () => getRandomArrayElement(filmItems);
+const getFilm = () => (
+  {
+    id: nanoid(),
+    ...getRandomArrayElement(filmItems)
+  }
+);
 
 export { commentItems, getFilm };

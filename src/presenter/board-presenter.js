@@ -19,6 +19,7 @@ export default class BoardPresenter {
   #filmsListComponent = new FilmsListView();
   #boardFilms = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #filmPresenters = new Map();
 
   constructor ({boardComponent, filmsListContainer, filmsModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -46,15 +47,6 @@ export default class BoardPresenter {
       render(new MostCommentedView(), this.#boardComponent.element);
     }
   }
-
-  #handleShowMoreButtonClick = () => {
-    this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
-    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
-
-    if (this.#renderedFilmCount >= this.#boardFilms.length) {
-      remove(this.#showMoreButtonComponent);
-    }
-  };
 
   #renderShowMoreButton() {
     this.#showMoreButtonComponent = new ShowMoreButtonView({
@@ -95,5 +87,22 @@ export default class BoardPresenter {
     });
 
     filmPresenter.init(film);
+    this.#filmPresenters.set(film.id, filmPresenter);
   }
+
+  #clearFilmsList() {
+    this.#filmPresenters.forEach((presenter) => presenter.destroy());
+    this.#filmPresenters.clear();
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    remove(this.#showMoreButtonComponent);
+  }
+
+  #handleShowMoreButtonClick = () => {
+    this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#boardFilms.length) {
+      remove(this.#showMoreButtonComponent);
+    }
+  };
 }
