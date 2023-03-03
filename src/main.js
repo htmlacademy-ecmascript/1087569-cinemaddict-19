@@ -17,7 +17,6 @@ const filmsModel = new FilmsModel();
 const filters = generateFilter(filmsModel.films);
 const boardPresenter = new BoardPresenter({
   boardComponent: boardComponent,
-  boardContainer: mainContainer,
   filmsListContainer: filmsListContainer,
   filmsModel,
   bodyContainer: bodyContainer,
