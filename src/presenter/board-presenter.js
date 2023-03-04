@@ -18,6 +18,7 @@ export default class BoardPresenter {
   #bodyContainer = null;
   #mainContainer = null;
   #filmsListComponent = new FilmsListView();
+  #sortComponent = null;
   #boardFilms = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #filmPresenters = new Map();
@@ -58,7 +59,11 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
-    render(new SortView(), this.#boardComponent.element, RenderPosition.BEFOREBEGIN);
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
+    render(this.#sortComponent, this.#boardComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
   #renderListEmpty(isEmpty) {
@@ -107,6 +112,12 @@ export default class BoardPresenter {
 
   #handleModeChange = () => {
     this.#filmPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
   };
 
   #handleShowMoreButtonClick = () => {
