@@ -12,9 +12,15 @@ const FilterType = {
   FAVORITES: 'Favorites'
 };
 
+const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating'
+};
+
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING'
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType, Mode };
+export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode };
