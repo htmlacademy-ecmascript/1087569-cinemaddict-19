@@ -64,7 +64,8 @@ export default class BoardPresenter {
 
   #renderSort() {
     this.#sortComponent = new SortView({
-      onSortTypeChange: this.#handleSortTypeChange
+      onSortTypeChange: this.#handleSortTypeChange,
+      currentSortType : this.#currentSortType
     });
 
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.BEFOREBEGIN);
@@ -140,6 +141,10 @@ export default class BoardPresenter {
     }
 
     this.#sortFilms(sortType);
+    this.#clearFilmsList();
+    remove(this.#sortComponent);
+    this.#renderSort();
+    this.#renderFilmsList();
   };
 
   #handleShowMoreButtonClick = () => {

@@ -64,14 +64,14 @@ const getWeightForNull = (dataA, dataB) => {
 };
 
 const sortDateDown = (filmA, filmB) => {
-  const weight = getWeightForNull(filmA.release.date, filmB.release.date);
+  const weight = getWeightForNull(filmA.filmInfo.release.date, filmB.filmInfo.release.date);
 
-  return weight ?? dayjs(filmA.release.date).diff(dayjs(filmB.release.date));
+  return weight ?? dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date));
 };
 
 const sortRatingDown = (filmA, filmB) => {
-  const weight = getWeightForNull(filmA.totalRaiting, filmB.totalRaiting);
-  return weight ?? filmB.totalRaiting - filmA.totalRaiting;
+  const weight = getWeightForNull(filmA.filmInfo.totalRating, filmB.filmInfo.totalRating);
+  return weight ?? filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 };
 
 export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem, sortDateDown, sortRatingDown };
