@@ -47,4 +47,31 @@ const generateFilter = (films) => Object.entries(filter).map(
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem };
+const getWeightForNull = (dataA, dataB) => {
+  if (dataA === null && dataB === null) {
+    return 0;
+  }
+
+  if (dataA === null) {
+    return 1;
+  }
+
+  if (dataB === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+const sortDateDown = (filmA, filmB) => {
+  const weight = getWeightForNull(filmA.release.date, filmB.release.date);
+
+  return weight ?? dayjs(filmA.release.date).diff(dayjs(filmB.release.date));
+};
+
+const sortRatingDown = (filmA, filmB) => {
+  const weight = getWeightForNull(filmA.totalRaiting, filmB.totalRaiting);
+  return weight ?? filmB.totalRaiting - filmA.totalRaiting;
+};
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem, sortDateDown, sortRatingDown };

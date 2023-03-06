@@ -6,7 +6,8 @@ import MostCommentedView from '../view/most-commented-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
-import { updateItem } from '../utils.js';
+import { updateItem, sortDateDown, sortRatingDown } from '../utils.js';
+import { SortType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -22,6 +23,8 @@ export default class BoardPresenter {
   #boardFilms = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #filmPresenters = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedBoardFilms = [];
 
   constructor ({boardComponent, filmsListContainer, filmsModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -33,6 +36,7 @@ export default class BoardPresenter {
 
   init() {
     this.#boardFilms = [...this.#filmsModel.films];
+    this.#sourcedBoardFilms = [...this.#filmsModel.films];
     this.#renderBoard();
   }
 
@@ -98,6 +102,21 @@ export default class BoardPresenter {
     this.#filmPresenters.set(film.id, filmPresenter);
   }
 
+  #sortFilms(sortType) {
+    switch(sortType) {
+      case SortType.DATE:
+        this.#boardFilms.sort(sortDateDown);
+        break;
+      case SortType.RATING:
+        this.#boardFilms.sort(sortRatingDown);
+        break;
+      default:
+        this.#boardFilms = [...this.#sourcedBoardFilms];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
   #clearFilmsList() {
     this.#filmPresenters.forEach((presenter) => presenter.destroy());
     this.#filmPresenters.clear();
@@ -107,6 +126,7 @@ export default class BoardPresenter {
 
   #handleFilmChange = (updatedFilm) => {
     this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
+    this.#sourcedBoardFilms = updateItem(this.#sourcedBoardFilms, updatedFilm);
     this.#filmPresenters.get(updatedFilm.id).init(updatedFilm);
   };
 
@@ -115,9 +135,11 @@ export default class BoardPresenter {
   };
 
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
-    // - Очищаем список
-    // - Рендерим список заново
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortFilms(sortType);
   };
 
   #handleShowMoreButtonClick = () => {
