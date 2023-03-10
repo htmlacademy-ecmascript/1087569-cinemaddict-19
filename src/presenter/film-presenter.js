@@ -51,8 +51,10 @@ export default class FilmPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
+      const currYcoord = prevFilmPopupComponent.element.scrollTop;
       replace(this.#filmCardComponent, prevFilmCardComponent);
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
+      this.#fixScroll(currYcoord, this.#filmPopupComponent);
     }
   }
 
@@ -65,6 +67,10 @@ export default class FilmPresenter {
   destroy() {
     remove(this.#filmCardComponent);
     remove(this.#filmPopupComponent);
+  }
+
+  #fixScroll(currYcoord, newPopup) {
+    newPopup.element.scrollTo(0, currYcoord);
   }
 
   #addPopup() {
@@ -85,7 +91,6 @@ export default class FilmPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
       evt.preventDefault();
-      this.#handleDataChange(this.#film);
       this.#removePopup();
     }
   };
@@ -94,8 +99,7 @@ export default class FilmPresenter {
     this.#addPopup();
   };
 
-  #handlePopupClick = (film) => {
-    this.#handleDataChange(film);
+  #handlePopupClick = () => {
     this.#removePopup();
   };
 
