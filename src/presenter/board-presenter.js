@@ -34,6 +34,10 @@ export default class BoardPresenter {
     this.#mainContainer = mainContainer;
   }
 
+  get films() {
+    return this.#filmsModel.films;
+  }
+
   init() {
     this.#boardFilms = [...this.#filmsModel.films];
     this.#sourcedBoardFilms = [...this.#filmsModel.films];
