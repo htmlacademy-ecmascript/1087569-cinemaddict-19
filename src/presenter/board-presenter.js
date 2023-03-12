@@ -6,7 +6,7 @@ import MostCommentedView from '../view/most-commented-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
-import { updateItem, sortDateDown, sortRatingDown } from '../utils.js';
+import { sortDateDown, sortRatingDown } from '../utils.js';
 import { SortType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
@@ -20,11 +20,9 @@ export default class BoardPresenter {
   #mainContainer = null;
   #filmsListComponent = new FilmsListView();
   #sortComponent = null;
-  #boardFilms = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
-  #sourcedBoardFilms = [];
 
   constructor ({boardComponent, filmsListContainer, filmsModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -35,19 +33,24 @@ export default class BoardPresenter {
   }
 
   get films() {
+    switch (this.#currentSortType) {
+      case SortType.DATE:
+        return [...this.#filmsModel.films].sort(sortDateDown);
+      case SortType.RATING:
+        return [...this.#filmsModel.films].sort(sortRatingDown);
+    }
+
     return this.#filmsModel.films;
   }
 
   init() {
-    this.#boardFilms = [...this.#filmsModel.films];
-    this.#sourcedBoardFilms = [...this.#filmsModel.films];
     this.#renderBoard();
   }
 
   #renderBoard() {
     render(this.#boardComponent, this.#mainContainer);
 
-    if (this.#boardFilms.length === 0) {
+    if (this.films.length === 0) {
       this.#renderListEmpty(true);
     } else {
       this.#renderSort();
@@ -80,19 +83,20 @@ export default class BoardPresenter {
   }
 
   #renderFilmsList() {
+    const filmCount = this.films.length;
+    const films = this.films.slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
+
     render(this.#filmsListComponent, this.#filmsListContainer);
     this.#renderListEmpty();
-    this.#renderFilms(0, Math.min(this.#boardFilms.length, FILM_COUNT_PER_STEP));
+    this.#renderFilms(films);
 
-    if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
+    if (filmCount > FILM_COUNT_PER_STEP) {
       this.#renderShowMoreButton();
     }
   }
 
-  #renderFilms(from, to) {
-    this.#boardFilms
-      .slice(from, to)
-      .forEach((film) => this.#renderFilm(film));
+  #renderFilms(films) {
+    films.forEach((film) => this.#renderFilm(film));
   }
 
   #renderFilm(film) {
@@ -107,21 +111,6 @@ export default class BoardPresenter {
     this.#filmPresenters.set(film.id, filmPresenter);
   }
 
-  #sortFilms(sortType) {
-    switch(sortType) {
-      case SortType.DATE:
-        this.#boardFilms.sort(sortDateDown);
-        break;
-      case SortType.RATING:
-        this.#boardFilms.sort(sortRatingDown);
-        break;
-      default:
-        this.#boardFilms = [...this.#sourcedBoardFilms];
-    }
-
-    this.#currentSortType = sortType;
-  }
-
   #clearFilmsList() {
     this.#filmPresenters.forEach((presenter) => presenter.destroy());
     this.#filmPresenters.clear();
@@ -130,8 +119,6 @@ export default class BoardPresenter {
   }
 
   #handleFilmChange = (updatedFilm) => {
-    this.#boardFilms = updateItem(this.#boardFilms, updatedFilm);
-    this.#sourcedBoardFilms = updateItem(this.#sourcedBoardFilms, updatedFilm);
     this.#filmPresenters.get(updatedFilm.id).init(updatedFilm);
   };
 
@@ -144,7 +131,7 @@ export default class BoardPresenter {
       return;
     }
 
-    this.#sortFilms(sortType);
+    this.#currentSortType = sortType;
     this.#clearFilmsList();
     remove(this.#sortComponent);
     this.#renderSort();
@@ -152,10 +139,14 @@ export default class BoardPresenter {
   };
 
   #handleShowMoreButtonClick = () => {
-    this.#renderFilms(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
-    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+    const filmCount = this.films.length;
+    const newRenderedFilmCount = Math.min(filmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP);
+    const films = this.films.slice(this.#renderedFilmCount, newRenderedFilmCount);
 
-    if (this.#renderedFilmCount >= this.#boardFilms.length) {
+    this.#renderFilms(films);
+    this.#renderedFilmCount = newRenderedFilmCount;
+
+    if (this.#renderedFilmCount >= filmCount) {
       remove(this.#showMoreButtonComponent);
     }
   };
