@@ -7,7 +7,7 @@ import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import { sortDateDown, sortRatingDown } from '../utils.js';
-import { SortType } from '../consts.js';
+import { SortType, UserAction, UpdateType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -121,19 +121,31 @@ export default class BoardPresenter {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
-    // Здесь будем вызывать обновление модели.
-    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
-    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
-    // update - обновленные данные
+    switch (actionType) {
+      case UserAction.UPDATE_FILM:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
+      case UserAction.ADD_COMMENT:
+        //Обновление модели комментариев
+        break;
+      case UserAction.DELETE_COMMENT:
+        //Обновление модели комментариев
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
-    // В зависимости от типа изменений решаем, что делать:
-    // - обновить часть списка (например, когда поменялось описание)
-    // - обновить список (например, когда задача ушла в архив)
-    // - обновить всю доску (например, при переключении фильтра)
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#filmPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        //
+        break;
+      case UpdateType.MAJOR:
+        //
+        break;
+    }
   };
 
   #handleModeChange = () => {
