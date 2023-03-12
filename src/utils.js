@@ -45,8 +45,6 @@ const generateFilter = (films) => Object.entries(filter).map(
   })
 );
 
-const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
 const getWeightForNull = (dataA, dataB) => {
   if (dataA === null && dataB === null) {
     return 0;
@@ -76,4 +74,4 @@ const sortRatingDown = (filmA, filmB) => {
 
 const fixPopupScroll = (popup, coordY) => popup.scrollTo(0, coordY);
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem, sortDateDown, sortRatingDown, fixPopupScroll };
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, sortDateDown, sortRatingDown, fixPopupScroll };

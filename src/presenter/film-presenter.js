@@ -2,7 +2,7 @@ import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
 import { fixPopupScroll } from '../utils.js';
-import { Keys, Mode } from '../consts.js';
+import { Keys, Mode, UserAction, UpdateType } from '../consts.js';
 
 export default class FilmPresenter {
   #filmsListContainer = null;
@@ -101,32 +101,44 @@ export default class FilmPresenter {
   };
 
   #handleWatchlistClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        watchlist: !this.#film.userDetails.watchlist,
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          watchlist: !this.#film.userDetails.watchlist,
+        }
       }
-    });
+    );
   };
 
   #handleWatchedClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        alreadyWatched: !this.#film.userDetails.alreadyWatched
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          alreadyWatched: !this.#film.userDetails.alreadyWatched
+        }
       }
-    });
+    );
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: {
-        ...this.#film.userDetails,
-        favorite: !this.#film.userDetails.favorite
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {
+          ...this.#film.userDetails,
+          favorite: !this.#film.userDetails.favorite
+        }
       }
-    });
+    );
   };
 }

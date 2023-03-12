@@ -30,6 +30,8 @@ export default class BoardPresenter {
     this.#filmsModel = filmsModel;
     this.#bodyContainer = bodyContainer;
     this.#mainContainer = mainContainer;
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
   }
 
   get films() {
@@ -103,7 +105,7 @@ export default class BoardPresenter {
     const filmPresenter = new FilmPresenter({
       filmsListContainer: this.#filmsListComponent.element,
       bodyContainer: this.#bodyContainer,
-      onDataChange: this.#handleFilmChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
 
@@ -118,8 +120,20 @@ export default class BoardPresenter {
     remove(this.#showMoreButtonComponent);
   }
 
-  #handleFilmChange = (updatedFilm) => {
-    this.#filmPresenters.get(updatedFilm.id).init(updatedFilm);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+    // Здесь будем вызывать обновление модели.
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   };
 
   #handleModeChange = () => {
