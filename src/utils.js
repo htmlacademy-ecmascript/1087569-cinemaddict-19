@@ -74,4 +74,6 @@ const sortRatingDown = (filmA, filmB) => {
   return weight ?? filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem, sortDateDown, sortRatingDown };
+const fixPopupScroll = (popup, coordY) => popup.scrollTo(0, coordY);
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, updateItem, sortDateDown, sortRatingDown, fixPopupScroll };

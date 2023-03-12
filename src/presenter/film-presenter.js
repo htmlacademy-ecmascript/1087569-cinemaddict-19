@@ -1,6 +1,7 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
+import { fixPopupScroll } from '../utils.js';
 import { Keys, Mode } from '../consts.js';
 
 export default class FilmPresenter {
@@ -54,7 +55,7 @@ export default class FilmPresenter {
       const currYcoord = prevFilmPopupComponent.element.scrollTop;
       replace(this.#filmCardComponent, prevFilmCardComponent);
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
-      this.#fixScroll(currYcoord, this.#filmPopupComponent);
+      fixPopupScroll(this.#filmPopupComponent.element, currYcoord);
     }
   }
 
@@ -67,10 +68,6 @@ export default class FilmPresenter {
   destroy() {
     remove(this.#filmCardComponent);
     remove(this.#filmPopupComponent);
-  }
-
-  #fixScroll(currYcoord, newPopup) {
-    newPopup.element.scrollTo(0, currYcoord);
   }
 
   #addPopup() {

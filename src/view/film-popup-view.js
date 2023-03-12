@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { formatDuration, formatReleaseFilm, formatCommentDate, getComments } from '../utils.js';
+import { formatDuration, formatReleaseFilm, formatCommentDate, getComments, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
 import { commentItems } from '../mock/film.js';
 
@@ -205,7 +205,7 @@ export default class FilmPopupView extends AbstractStatefulView {
         comment: this._state.localComment.comment
       }
     });
-    this.element.scrollTo(0, currYcoord);
+    fixPopupScroll(this.element, currYcoord);
   };
 
   static parseFilmToState(film) {
