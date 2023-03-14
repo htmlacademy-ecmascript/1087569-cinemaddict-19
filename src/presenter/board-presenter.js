@@ -20,6 +20,7 @@ export default class BoardPresenter {
   #mainContainer = null;
   #filmsListComponent = new FilmsListView();
   #sortComponent = null;
+  #listEmptyComponent = null;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
@@ -52,14 +53,44 @@ export default class BoardPresenter {
   #renderBoard() {
     render(this.#boardComponent, this.#mainContainer);
 
-    if (this.films.length === 0) {
+    const films = this.films;
+    const filmCount = films.length;
+
+    if (filmCount === 0) {
       this.#renderListEmpty(true);
     } else {
       this.#renderSort();
-      this.#renderFilmsList();
+      render(this.#filmsListComponent, this.#filmsListContainer);
+      this.#renderListEmpty();
+      this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
+
+      if (filmCount > this.#renderedFilmCount) {
+        this.#renderShowMoreButton();
+      }
 
       render(new TopRatedView(), this.#boardComponent.element);
       render(new MostCommentedView(), this.#boardComponent.element);
+    }
+  }
+
+  #clearBoard({resetRenderedFilmCount = false, resetSortType = false} = {}) {
+    const filmCount = this.films.length;
+
+    this.#filmPresenters.forEach((presenter) => presenter.destroy());
+    this.#filmPresenters.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#listEmptyComponent);
+    remove(this.#showMoreButtonComponent);
+
+    if (resetRenderedFilmCount) {
+      this.#renderedFilmCount = FILM_COUNT_PER_STEP;
+    } else {
+      this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
+    }
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
     }
   }
 
@@ -81,20 +112,9 @@ export default class BoardPresenter {
   }
 
   #renderListEmpty(isEmpty) {
-    render(new ListEmptyView(isEmpty), this.#filmsListContainer, RenderPosition.AFTERBEGIN);
-  }
+    this.#listEmptyComponent = new ListEmptyView(isEmpty);
 
-  #renderFilmsList() {
-    const filmCount = this.films.length;
-    const films = this.films.slice(0, Math.min(filmCount, FILM_COUNT_PER_STEP));
-
-    render(this.#filmsListComponent, this.#filmsListContainer);
-    this.#renderListEmpty();
-    this.#renderFilms(films);
-
-    if (filmCount > FILM_COUNT_PER_STEP) {
-      this.#renderShowMoreButton();
-    }
+    render(this.#listEmptyComponent, this.#filmsListContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderFilms(films) {
@@ -111,13 +131,6 @@ export default class BoardPresenter {
 
     filmPresenter.init(film);
     this.#filmPresenters.set(film.id, filmPresenter);
-  }
-
-  #clearFilmsList() {
-    this.#filmPresenters.forEach((presenter) => presenter.destroy());
-    this.#filmPresenters.clear();
-    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
-    remove(this.#showMoreButtonComponent);
   }
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -140,10 +153,12 @@ export default class BoardPresenter {
         this.#filmPresenters.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        //
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        //
+        this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
+        this.#renderBoard();
         break;
     }
   };
@@ -158,10 +173,8 @@ export default class BoardPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearFilmsList();
-    remove(this.#sortComponent);
-    this.#renderSort();
-    this.#renderFilmsList();
+    this.#clearBoard({resetRenderedFilmCount: true});
+    this.#renderBoard();
   };
 
   #handleShowMoreButtonClick = () => {
