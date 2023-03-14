@@ -85,13 +85,13 @@ export default class FilmPresenter {
     this.#bodyContainer.removeChild(this.#filmPopupComponent.element);
     this.#bodyContainer.classList.remove('hide-overflow');
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === Keys.ESCAPE || evt.key === Keys.ESC) {
       evt.preventDefault();
       this.#removePopup();
+      this.#mode = Mode.DEFAULT;
     }
   };
 
@@ -101,47 +101,90 @@ export default class FilmPresenter {
 
   #handlePopupClick = () => {
     this.#removePopup();
+    this.#mode = Mode.DEFAULT;
   };
 
   #handleWatchlistClick = () => {
-    this.#handleDataChange(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {
-          ...this.#film.userDetails,
-          watchlist: !this.#film.userDetails.watchlist,
+    if (this.#mode === Mode.DEFAULT) {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            watchlist: !this.#film.userDetails.watchlist,
+          }
         }
-      }
-    );
+      );
+    } else {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            watchlist: !this.#film.userDetails.watchlist,
+          }
+        }
+      );
+    }
   };
 
   #handleWatchedClick = () => {
-    this.#handleDataChange(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {
-          ...this.#film.userDetails,
-          alreadyWatched: !this.#film.userDetails.alreadyWatched
+    if (this.#mode === Mode.DEFAULT) {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            alreadyWatched: !this.#film.userDetails.alreadyWatched
+          }
         }
-      }
-    );
+      );
+    } else {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            alreadyWatched: !this.#film.userDetails.alreadyWatched
+          }
+        }
+      );
+    }
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange(
-      UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {
-          ...this.#film.userDetails,
-          favorite: !this.#film.userDetails.favorite
+    if (this.#mode === Mode.DEFAULT) {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            favorite: !this.#film.userDetails.favorite
+          }
         }
-      }
-    );
+      );
+    } else {
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
+        {
+          ...this.#film,
+          userDetails: {
+            ...this.#film.userDetails,
+            favorite: !this.#film.userDetails.favorite
+          }
+        }
+      );
+    }
   };
 }
