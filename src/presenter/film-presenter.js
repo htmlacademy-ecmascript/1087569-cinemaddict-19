@@ -6,6 +6,7 @@ import { Keys, Mode, UserAction, UpdateType } from '../consts.js';
 
 export default class FilmPresenter {
   #filmsListContainer = null;
+  #commentsModel = null;
   #bodyContainer = null;
   #filmCardComponent = null;
   #filmPopupComponent = null;
@@ -14,8 +15,9 @@ export default class FilmPresenter {
   #handleDataChange = null;
   #handleModeChange = null;
 
-  constructor({filmsListContainer, bodyContainer, onDataChange, onModeChange}) {
+  constructor({filmsListContainer, commentsModel, bodyContainer, onDataChange, onModeChange}) {
     this.#filmsListContainer = filmsListContainer;
+    this.#commentsModel = commentsModel;
     this.#bodyContainer = bodyContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
@@ -36,6 +38,7 @@ export default class FilmPresenter {
     });
     this.#filmPopupComponent = new FilmPopupView({
       film: this.#film,
+      commentsModel: this.#commentsModel,
       onClick: this.#handlePopupClick,
       onWatchlistClick: this.#handleWatchlistClick,
       onWatchedClick: this.#handleWatchedClick,

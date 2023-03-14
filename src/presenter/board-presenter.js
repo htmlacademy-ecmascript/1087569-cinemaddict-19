@@ -16,6 +16,7 @@ export default class BoardPresenter {
   #showMoreButtonComponent = null;
   #filmsListContainer = null;
   #filmsModel = null;
+  #commentsModel = null;
   #bodyContainer = null;
   #mainContainer = null;
   #filmsListComponent = new FilmsListView();
@@ -25,14 +26,16 @@ export default class BoardPresenter {
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
 
-  constructor ({boardComponent, filmsListContainer, filmsModel, bodyContainer, mainContainer}) {
+  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
     this.#filmsListContainer = filmsListContainer;
     this.#filmsModel = filmsModel;
+    this.#commentsModel = commentsModel;
     this.#bodyContainer = bodyContainer;
     this.#mainContainer = mainContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#commentsModel.addObserver(this.#handleModeChange);
   }
 
   get films() {
@@ -124,6 +127,7 @@ export default class BoardPresenter {
   #renderFilm(film) {
     const filmPresenter = new FilmPresenter({
       filmsListContainer: this.#filmsListComponent.element,
+      commentsModel: this.#commentsModel,
       bodyContainer: this.#bodyContainer,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
@@ -139,10 +143,10 @@ export default class BoardPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
-        //Обновление модели комментариев
+        this.#commentsModel.addComment(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        //Обновление модели комментариев
+        this.#commentsModel.deleteComment(updateType, update);
         break;
     }
   };

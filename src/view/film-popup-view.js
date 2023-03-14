@@ -1,28 +1,24 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { formatDuration, formatReleaseFilm, formatCommentDate, getComments, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
-import { commentItems } from '../mock/film.js';
 
-const createCommentsListTemplate = (commentIds) => {
-  const comments = getComments(commentItems, commentIds);
-  return(`
-    <ul class="film-details__comments-list">${comments.map((comment) => (
-      `<li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
-          </span>
-          <div>
-            <p class="film-details__comment-text">${comment.comment}</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">${comment.author}</span>
-              <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>`)).join('')}
-    </ul>`
-  );
-};
+const createCommentsListTemplate = (comments) => (`
+  <ul class="film-details__comments-list">${comments.map((comment) => (`
+    <li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${comment.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`)).join('')}
+  </ul>`
+);
 
 const createNewCommentTemplate = (currentEmotion) => (`
   <form class="film-details__new-comment" action="" method="get">
@@ -50,8 +46,8 @@ const createNewCommentTemplate = (currentEmotion) => (`
 `);
 
 const createFilmPopupTemplate = (film) => {
-  const {comments, filmInfo, userDetails, localComment} = film;
-  const commentsTemplate = createCommentsListTemplate(comments);
+  const {filmInfo, userDetails, localComment, commentsForFilm} = film;
+  const commentsTemplate = createCommentsListTemplate(commentsForFilm);
   const newCommentTemplate = createNewCommentTemplate(localComment.emotion);
 
   return(`
@@ -127,7 +123,7 @@ const createFilmPopupTemplate = (film) => {
 
         <div class="film-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments${comments.length > 0 ? `<span class="film-details__comments-count"> ${comments.length}</span>` : ''}</h3>
+            <h3 class="film-details__comments-title">Comments${commentsForFilm.length > 0 ? `<span class="film-details__comments-count"> ${commentsForFilm.length}</span>` : ''}</h3>
 
             ${commentsTemplate}
             ${newCommentTemplate}
@@ -145,9 +141,9 @@ export default class FilmPopupView extends AbstractStatefulView {
   #handleWatchedClick = null;
   #handleFavoriteClick = null;
 
-  constructor({film, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick}) {
+  constructor({film, commentsModel, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick}) {
     super();
-    this._setState(FilmPopupView.parseFilmToState(film));
+    this._setState(FilmPopupView.parseFilmToState(film, commentsModel));
     this.#handleClick = onClick;
     this.#handleWatchlistClick = onWatchlistClick;
     this.#handleWatchedClick = onWatchedClick;
@@ -208,13 +204,14 @@ export default class FilmPopupView extends AbstractStatefulView {
     fixPopupScroll(this.element, currYcoord);
   };
 
-  static parseFilmToState(film) {
+  static parseFilmToState(film, commentsModel) {
     return {
       ...film,
       localComment: {
         comment: null,
         emotion: null
-      }
+      },
+      commentsForFilm: getComments(commentsModel.comments, film.comments)
     };
   }
 
@@ -224,6 +221,7 @@ export default class FilmPopupView extends AbstractStatefulView {
       Логика передачи комментария
     */
     delete film.localComment;
+    delete film.commentsForFilm;
     return film;
   }
 }
