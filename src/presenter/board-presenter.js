@@ -35,7 +35,7 @@ export default class BoardPresenter {
     this.#mainContainer = mainContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#commentsModel.addObserver(this.#handleModeChange);
+    this.#commentsModel.addObserver(this.#handleModelEvent);
   }
 
   get films() {

@@ -42,7 +42,8 @@ export default class FilmPresenter {
       onClick: this.#handlePopupClick,
       onWatchlistClick: this.#handleWatchlistClick,
       onWatchedClick: this.#handleWatchedClick,
-      onFavoriteClick: this.#handleFavoriteClick
+      onFavoriteClick: this.#handleFavoriteClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
@@ -184,6 +185,19 @@ export default class FilmPresenter {
             favorite: !this.#film.userDetails.favorite
           }
         }
+      );
+    }
+  };
+
+  #handleDeleteClick = (commentId) => {
+    if (this.#mode === Mode.EDITING) {
+      this.#handleDataChange(
+        UserAction.DELETE_COMMENT,
+        UpdateType.PATCH,
+        /*{
+          ...this.#film,
+          commentId: commentId
+        }*/
       );
     }
   };

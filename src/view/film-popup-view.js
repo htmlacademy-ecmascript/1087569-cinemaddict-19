@@ -13,7 +13,7 @@ const createCommentsListTemplate = (comments) => (`
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
         </p>
       </div>
     </li>`)).join('')}
@@ -140,14 +140,16 @@ export default class FilmPopupView extends AbstractStatefulView {
   #handleWatchlistClick = null;
   #handleWatchedClick = null;
   #handleFavoriteClick = null;
+  #handleDeleteClick = null;
 
-  constructor({film, commentsModel, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick}) {
+  constructor({film, commentsModel, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick, onDeleteClick}) {
     super();
     this._setState(FilmPopupView.parseFilmToState(film, commentsModel));
     this.#handleClick = onClick;
     this.#handleWatchlistClick = onWatchlistClick;
     this.#handleWatchedClick = onWatchedClick;
     this.#handleFavoriteClick = onFavoriteClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -167,6 +169,8 @@ export default class FilmPopupView extends AbstractStatefulView {
       .addEventListener('click', this.#favoriteClickHandler);
     this.element.querySelector('.film-details__emoji-list')
       .addEventListener('click', this.#emojiClickHandler);
+    this.element.querySelector('.film-details__comments-list')
+      .addEventListener('click', this.#deleteClickHandler);
   }
 
   #clickHandler = (evt) => {
@@ -202,6 +206,15 @@ export default class FilmPopupView extends AbstractStatefulView {
       }
     });
     fixPopupScroll(this.element, currYcoord);
+  };
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.tagName !== 'BUTTON') {
+      return;
+    }
+
+    this.#handleDeleteClick(evt.target.dataset.commentId);
   };
 
   static parseFilmToState(film, commentsModel) {
