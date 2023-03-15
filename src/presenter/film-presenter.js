@@ -1,7 +1,7 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import { fixPopupScroll } from '../utils.js';
+import { fixPopupScroll, deleteComment } from '../utils.js';
 import { Keys, Mode, UserAction, UpdateType } from '../consts.js';
 
 export default class FilmPresenter {
@@ -93,6 +93,11 @@ export default class FilmPresenter {
       evt.preventDefault();
       this.#removePopup();
       this.#mode = Mode.DEFAULT;
+      this.#handleDataChange(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        this.#film
+      );
     }
   };
 
@@ -103,6 +108,11 @@ export default class FilmPresenter {
   #handlePopupClick = () => {
     this.#removePopup();
     this.#mode = Mode.DEFAULT;
+    this.#handleDataChange(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      this.#film
+    );
   };
 
   #handleWatchlistClick = () => {
@@ -190,15 +200,14 @@ export default class FilmPresenter {
   };
 
   #handleDeleteClick = (commentId) => {
-    if (this.#mode === Mode.EDITING) {
-      this.#handleDataChange(
-        UserAction.DELETE_COMMENT,
-        UpdateType.PATCH,
-        /*{
-          ...this.#film,
-          commentId: commentId
-        }*/
-      );
-    }
+    this.#handleDataChange(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      {
+        ...this.#film,
+        comments: deleteComment([...this.#film.comments], commentId),
+        commentId: commentId
+      }
+    );
   };
 }
