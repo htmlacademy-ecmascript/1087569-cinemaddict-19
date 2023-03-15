@@ -6,7 +6,7 @@ import MostCommentedView from '../view/most-commented-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
-import { sortDateDown, sortRatingDown } from '../utils.js';
+import { sortDateDown, sortRatingDown, filter } from '../utils.js';
 import { SortType, UserAction, UpdateType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
@@ -17,6 +17,7 @@ export default class BoardPresenter {
   #filmsListContainer = null;
   #filmsModel = null;
   #commentsModel = null;
+  #filtersModel = null;
   #bodyContainer = null;
   #mainContainer = null;
   #filmsListComponent = new FilmsListView();
@@ -26,27 +27,32 @@ export default class BoardPresenter {
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
 
-  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, bodyContainer, mainContainer}) {
+  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
     this.#filmsListContainer = filmsListContainer;
     this.#filmsModel = filmsModel;
     this.#commentsModel = commentsModel;
+    this.#filtersModel = filtersModel;
     this.#bodyContainer = bodyContainer;
     this.#mainContainer = mainContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
-    //this.#commentsModel.addObserver(this.#handleModelEvent);
+    this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
   get films() {
+    const filterType = this.#filtersModel.filter;
+    const films = this.#filmsModel.films;
+    const filteredFilms = filter[filterType](films);
+
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return [...this.#filmsModel.films].sort(sortDateDown);
+        return filteredFilms.sort(sortDateDown);
       case SortType.RATING:
-        return [...this.#filmsModel.films].sort(sortRatingDown);
+        return filteredFilms.sort(sortRatingDown);
     }
 
-    return this.#filmsModel.films;
+    return filteredFilms;
   }
 
   init() {

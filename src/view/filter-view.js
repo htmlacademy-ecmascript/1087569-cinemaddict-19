@@ -4,7 +4,7 @@ import { FilterType } from '../consts.js';
 const createFilterItemTemplate = (filter, currentFilterType) => {
   const {type, name, count} = filter;
   return (`
-    <a href="#${name}" class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''} data-filter-type="${type}"">
+    <a href="#${name}" class="main-navigation__item ${type === currentFilterType ? 'main-navigation__item--active' : ''}" data-filter-type="${type}">
       ${name} ${name !== FilterType.ALL ? `<span class="main-navigation__item-count">${count}</span>` : ' '}
     </a>`
   );
@@ -39,6 +39,11 @@ export default class FilterView extends AbstractView {
   }
 
   #filterTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'A') {
+      return;
+    }
+
     evt.preventDefault();
+    this.#handleFilterTypeChange(evt.target.dataset.filterType);
   };
 }

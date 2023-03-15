@@ -29,6 +29,7 @@ const boardPresenter = new BoardPresenter({
   filmsListContainer: filmsListContainer,
   filmsModel,
   commentsModel,
+  filtersModel,
   bodyContainer: bodyContainer,
   mainContainer: mainContainer
 });
