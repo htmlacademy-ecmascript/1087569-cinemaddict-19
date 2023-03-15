@@ -7,7 +7,14 @@ import BoardPresenter from './presenter/board-presenter.js';
 import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comments-model.js';
 import FiltersModel from './model/filters-model.js';
-import { generateFilter } from './utils.js';
+
+const filters = [
+  {
+    type: 'all',
+    name: 'ALL',
+    count: 0,
+  },
+];
 
 const boardComponent = new BoardView();
 const mainContainer = document.querySelector('main');
@@ -18,7 +25,7 @@ const bodyContainer = document.querySelector('body');
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
 const filtersModel = new FiltersModel();
-const filters = generateFilter(filmsModel.films);
+
 const boardPresenter = new BoardPresenter({
   boardComponent: boardComponent,
   filmsListContainer: filmsListContainer,
@@ -29,7 +36,11 @@ const boardPresenter = new BoardPresenter({
 });
 
 render(new UserProfileView(), headerContainer);
-render(new FilterView({filters}), mainContainer);
+render(new FilterView({
+  filters,
+  currentFilterType: 'all',
+  onFilterTypeChange: () => {}
+}), mainContainer);
 boardPresenter.init();
 render(new FilmsCountView(), filmsCountContainer);
 
