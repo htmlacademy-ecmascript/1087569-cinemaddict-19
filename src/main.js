@@ -6,6 +6,7 @@ import FilmsCountView from './view/films-count-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FilmsModel from './model/films-model.js';
 import CommentsModel from './model/comments-model.js';
+import FiltersModel from './model/filters-model.js';
 import { generateFilter } from './utils.js';
 
 const boardComponent = new BoardView();
@@ -16,6 +17,7 @@ const filmsCountContainer = document.querySelector('.footer__statistics');
 const bodyContainer = document.querySelector('body');
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
+const filtersModel = new FiltersModel();
 const filters = generateFilter(filmsModel.films);
 const boardPresenter = new BoardPresenter({
   boardComponent: boardComponent,
