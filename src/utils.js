@@ -38,13 +38,6 @@ const filter = {
   [FilterType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite)
 };
 
-const generateFilter = (films) => Object.entries(filter).map(
-  ([filterName, filterFilms]) => ({
-    name: filterName,
-    count: filterFilms(films).length,
-  })
-);
-
 const getWeightForNull = (dataA, dataB) => {
   if (dataA === null && dataB === null) {
     return 0;
@@ -80,4 +73,4 @@ const deleteComment = (comments, commentId) => {
   return comments;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, generateFilter, sortDateDown, sortRatingDown, fixPopupScroll, deleteComment };
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, deleteComment, filter };
