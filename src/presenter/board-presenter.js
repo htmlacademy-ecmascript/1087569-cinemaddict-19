@@ -7,7 +7,7 @@ import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import { sortDateDown, sortRatingDown, filter } from '../utils.js';
-import { SortType, UserAction, UpdateType } from '../consts.js';
+import { SortType, UserAction, UpdateType, FilterType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -26,6 +26,7 @@ export default class BoardPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
 
   constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -41,9 +42,9 @@ export default class BoardPresenter {
   }
 
   get films() {
-    const filterType = this.#filtersModel.filter;
+    this.#filterType = this.#filtersModel.filter;
     const films = this.#filmsModel.films;
-    const filteredFilms = filter[filterType](films);
+    const filteredFilms = filter[this.#filterType](films);
 
     switch (this.#currentSortType) {
       case SortType.DATE:
@@ -121,7 +122,10 @@ export default class BoardPresenter {
   }
 
   #renderListEmpty(isEmpty) {
-    this.#listEmptyComponent = new ListEmptyView(isEmpty);
+    this.#listEmptyComponent = new ListEmptyView({
+      isEmpty: isEmpty,
+      filterType: this.#filterType
+    });
 
     render(this.#listEmptyComponent, this.#filmsListContainer, RenderPosition.AFTERBEGIN);
   }
