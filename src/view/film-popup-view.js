@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { formatDuration, formatReleaseFilm, formatCommentDate, getComments, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
+import { nanoid } from 'nanoid';
 
 const createCommentsListTemplate = (comments) => (`
   <ul class="film-details__comments-list">${comments.map((comment) => (`
@@ -20,14 +21,14 @@ const createCommentsListTemplate = (comments) => (`
   </ul>`
 );
 
-const createNewCommentTemplate = (currentEmotion) => (`
+const createNewCommentTemplate = (currentEmotion, currentComment) => (`
   <form class="film-details__new-comment" action="" method="get">
     <div class="film-details__add-emoji-label">
       ${currentEmotion ? `<img src="./images/emoji/${currentEmotion}.png" width="55" height="55" alt="emoji" data-emotion=${currentEmotion}>` : ''}
     </div>
 
     <label class="film-details__comment-label">
-      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${currentComment ? currentComment : ''}</textarea>
     </label>
 
     <div class="film-details__emoji-list">${COMMENT_EMOTIONS.map((emotion) => `
@@ -48,7 +49,7 @@ const createNewCommentTemplate = (currentEmotion) => (`
 const createFilmPopupTemplate = (film) => {
   const {filmInfo, userDetails, localComment, commentsForFilm} = film;
   const commentsTemplate = createCommentsListTemplate(commentsForFilm);
-  const newCommentTemplate = createNewCommentTemplate(localComment.emotion);
+  const newCommentTemplate = createNewCommentTemplate(localComment.emotion, localComment.comment);
 
   return(`
     <section class="film-details">
@@ -171,6 +172,8 @@ export default class FilmPopupView extends AbstractStatefulView {
       .addEventListener('click', this.#emojiClickHandler);
     this.element.querySelector('.film-details__comments-list')
       .addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('textarea')
+      .addEventListener('input', this.#commentInputHandler);
   }
 
   #clickHandler = (evt) => {
@@ -217,6 +220,15 @@ export default class FilmPopupView extends AbstractStatefulView {
     this.#handleDeleteClick(evt.target.dataset.commentId);
   };
 
+  #commentInputHandler = (evt) => {
+    this._setState({
+      localComment: {
+        emotion: this._state.localComment.emotion,
+        comment: evt.target.value
+      }
+    });
+  };
+
   static parseFilmToState(film, commentsModel) {
     return {
       ...film,
@@ -228,12 +240,21 @@ export default class FilmPopupView extends AbstractStatefulView {
     };
   }
 
-  static parseStateToFilm(state) {
-    const film = {...state};
-    /*
-      Логика передачи комментария
-    */
-    delete film.localComment;
+  static parseStateToUpdate(state) {
+    const newCommentId = nanoid();
+    state.comments.push(newCommentId);
+    const film = {
+      ...state,
+      localComment: {
+        id: newCommentId,
+        author: 'Movie Buff',
+        comment: state.localComment.comment,
+        date: '2022-05-11T00:00:00.000Z',
+        emotion: state.localComment.emotion
+      }
+    };
+
+
     delete film.commentsForFilm;
     return film;
   }

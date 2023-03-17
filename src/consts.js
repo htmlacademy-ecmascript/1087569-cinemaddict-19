@@ -2,7 +2,10 @@ const COMMENT_EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 
 const Keys = {
   ESCAPE: 'Escape',
-  ESC: 'Esc'
+  ESC: 'Esc',
+  CTRL: 'Control',
+  COMMAND: 'Command',
+  ENTER: 'Enter'
 };
 
 const FilterType = {

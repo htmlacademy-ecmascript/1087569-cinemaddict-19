@@ -78,6 +78,7 @@ export default class FilmPresenter {
     this.#bodyContainer.classList.add('hide-overflow');
     this.#bodyContainer.append(this.#filmPopupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#combinationKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
@@ -85,6 +86,7 @@ export default class FilmPresenter {
   #removePopup() {
     this.#bodyContainer.removeChild(this.#filmPopupComponent.element);
     this.#bodyContainer.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', this.#combinationKeyDownHandler);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
@@ -209,5 +211,27 @@ export default class FilmPresenter {
         commentId: commentId
       }
     );
+  };
+
+  #combinationKeyDownHandler = (evt) => {
+    if (evt.key === Keys.CTRL || evt.key === Keys.COMMAND) {
+      document.addEventListener('keydown', this.#secondButtonKeyDownHandler);
+    }
+  };
+
+  #secondButtonKeyDownHandler = (evt) => {
+    const currentComment = this.#filmPopupComponent._state.localComment.comment;
+    const currentEmotion = this.#filmPopupComponent._state.localComment.emotion;
+    if (evt.key === Keys.ENTER && currentComment && currentEmotion) {
+      const update = FilmPopupView.parseStateToUpdate(this.#filmPopupComponent._state);
+      this.#handleDataChange(
+        UserAction.ADD_COMMENT,
+        UpdateType.PATCH,
+        update
+      );
+      document.removeEventListener('keydown', this.#secondButtonKeyDownHandler);
+    } else {
+      document.removeEventListener('keydown', this.#secondButtonKeyDownHandler);
+    }
   };
 }
