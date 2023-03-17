@@ -2,6 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { formatDuration, formatReleaseFilm, formatCommentDate, getComments, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
 import { nanoid } from 'nanoid';
+import he from 'he';
 
 const createCommentsListTemplate = (comments) => (`
   <ul class="film-details__comments-list">${comments.map((comment) => (`
@@ -28,7 +29,7 @@ const createNewCommentTemplate = (currentEmotion, currentComment) => (`
     </div>
 
     <label class="film-details__comment-label">
-      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${currentComment ? currentComment : ''}</textarea>
+      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(currentComment ? currentComment : '')}</textarea>
     </label>
 
     <div class="film-details__emoji-list">${COMMENT_EMOTIONS.map((emotion) => `
