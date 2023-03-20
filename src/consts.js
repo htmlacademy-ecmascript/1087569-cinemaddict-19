@@ -38,4 +38,9 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType };
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method };
