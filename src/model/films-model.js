@@ -4,7 +4,15 @@ import { getFilm } from '../mock/film.js';
 const FILM_COUNT = 13;
 
 export default class FilmsModel extends Observable {
+  #filmsApiService = null;
   #films = Array.from({length: FILM_COUNT}, getFilm);
+
+  constructor({filmsApiService}) {
+    super();
+    this.#filmsApiService = filmsApiService;
+
+    this.#filmsApiService.films.then((films) => console.log(films));
+  }
 
   get films() {
     return this.#films;
