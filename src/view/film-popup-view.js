@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { formatDuration, formatReleaseFilm, formatCommentDate, getComments, fixPopupScroll } from '../utils.js';
+import { formatDuration, formatReleaseFilm, formatCommentDate, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
 import { nanoid } from 'nanoid';
 import he from 'he';
@@ -144,9 +144,9 @@ export default class FilmPopupView extends AbstractStatefulView {
   #handleFavoriteClick = null;
   #handleDeleteClick = null;
 
-  constructor({film, commentsModel, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick, onDeleteClick}) {
+  constructor({film, commentsForFilm, onClick, onWatchlistClick, onWatchedClick, onFavoriteClick, onDeleteClick}) {
     super();
-    this._setState(FilmPopupView.parseFilmToState(film, commentsModel));
+    this._setState(FilmPopupView.parseFilmToState(film, commentsForFilm));
     this.#handleClick = onClick;
     this.#handleWatchlistClick = onWatchlistClick;
     this.#handleWatchedClick = onWatchedClick;
@@ -230,14 +230,14 @@ export default class FilmPopupView extends AbstractStatefulView {
     });
   };
 
-  static parseFilmToState(film, commentsModel) {
+  static parseFilmToState(film, comments) {
     return {
       ...film,
       localComment: {
         comment: null,
         emotion: null
       },
-      commentsForFilm: getComments(commentsModel.comments, film.comments)
+      commentsForFilm: comments
     };
   }
 

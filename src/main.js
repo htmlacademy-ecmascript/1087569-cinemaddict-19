@@ -21,7 +21,9 @@ const bodyContainer = document.querySelector('body');
 const filmsModel = new FilmsModel({
   filmsApiService: new FilmsApiService(END_POINT, AUTHORIZATION)
 });
-const commentsModel = new CommentsModel();
+const commentsModel = new CommentsModel({
+  filmsApiService: new FilmsApiService(END_POINT, AUTHORIZATION)
+});
 const filtersModel = new FiltersModel();
 
 const filterPresenter = new FilterPresenter({

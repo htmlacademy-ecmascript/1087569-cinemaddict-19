@@ -29,8 +29,6 @@ const formatDuration = (duration) => {
   }
 };
 
-const getComments = (commentItems, commentIds) => commentItems.filter((item) => commentIds.includes(item.id));
-
 const filter = {
   [FilterType.ALL]: (films) => films,
   [FilterType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
@@ -73,4 +71,4 @@ const deleteComment = (comments, commentId) => {
   return comments;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, getComments, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, deleteComment, filter };
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, deleteComment, filter };

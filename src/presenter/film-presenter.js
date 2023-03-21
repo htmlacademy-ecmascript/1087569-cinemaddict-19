@@ -36,15 +36,6 @@ export default class FilmPresenter {
       onWatchedClick: this.#handleWatchedClick,
       onFavoriteClick: this.#handleFavoriteClick
     });
-    this.#filmPopupComponent = new FilmPopupView({
-      film: this.#film,
-      commentsModel: this.#commentsModel,
-      onClick: this.#handlePopupClick,
-      onWatchlistClick: this.#handleWatchlistClick,
-      onWatchedClick: this.#handleWatchedClick,
-      onFavoriteClick: this.#handleFavoriteClick,
-      onDeleteClick: this.#handleDeleteClick
-    });
 
     if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#filmsListContainer);
@@ -74,13 +65,29 @@ export default class FilmPresenter {
     remove(this.#filmPopupComponent);
   }
 
-  #addPopup() {
+  async #addPopup() {
+    const comments = await this.#getComments();
     this.#bodyContainer.classList.add('hide-overflow');
+    this.#filmPopupComponent = new FilmPopupView({
+      film: this.#film,
+      commentsForFilm: comments,
+      onClick: this.#handlePopupClick,
+      onWatchlistClick: this.#handleWatchlistClick,
+      onWatchedClick: this.#handleWatchedClick,
+      onFavoriteClick: this.#handleFavoriteClick,
+      onDeleteClick: this.#handleDeleteClick
+    });
+
     this.#bodyContainer.append(this.#filmPopupComponent.element);
     document.addEventListener('keydown', this.#escKeyDownHandler);
     document.addEventListener('keydown', this.#combinationKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
+  }
+
+  async #getComments() {
+    await this.#commentsModel.init(this.#film.id);
+    return this.#commentsModel.comments;
   }
 
   #removePopup() {
