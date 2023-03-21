@@ -49,9 +49,9 @@ export default class BoardPresenter {
 
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return filteredFilms.sort(sortDateDown);
+        return filteredFilms.slice().sort(sortDateDown);
       case SortType.RATING:
-        return filteredFilms.sort(sortRatingDown);
+        return filteredFilms.slice().sort(sortRatingDown);
     }
 
     return filteredFilms;
