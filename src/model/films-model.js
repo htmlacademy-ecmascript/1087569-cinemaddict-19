@@ -1,23 +1,25 @@
 import Observable from '../framework/observable.js';
-import { getFilm } from '../mock/film.js';
-
-const FILM_COUNT = 13;
 
 export default class FilmsModel extends Observable {
   #filmsApiService = null;
-  #films = Array.from({length: FILM_COUNT}, getFilm);
+  #films = [];
 
   constructor({filmsApiService}) {
     super();
     this.#filmsApiService = filmsApiService;
-
-    this.#filmsApiService.films.then((films) => {
-      console.log(this.#adaptToClient(films[0]));
-    });
   }
 
   get films() {
     return this.#films;
+  }
+
+  async init() {
+    try {
+      const films = await this.filmsApiService.films;
+      this.#films = films.map(this.#adaptToClient);
+    } catch(err) {
+      this.#films = [];
+    }
   }
 
   updateFilm(updateType, update) {

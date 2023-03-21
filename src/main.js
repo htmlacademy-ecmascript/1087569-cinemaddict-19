@@ -43,5 +43,6 @@ const boardPresenter = new BoardPresenter({
 render(new UserProfileView(), headerContainer);
 filterPresenter.init();
 boardPresenter.init();
+filmsModel.init();
 render(new FilmsCountView(), filmsCountContainer);
 
