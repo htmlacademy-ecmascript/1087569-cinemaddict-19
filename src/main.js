@@ -10,7 +10,7 @@ import FiltersModel from './model/filters-model.js';
 import FilmsApiService from './api/films-api-service.js';
 
 const AUTHORIZATION = 'Basic sv74dlm5qor';
-const END_POINT = 'https://19.ecmascript.pages.academy/cinemaddict/';
+const END_POINT = 'https://19.ecmascript.pages.academy/cinemaddict';
 
 const boardComponent = new BoardView();
 const mainContainer = document.querySelector('main');

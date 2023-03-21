@@ -45,14 +45,14 @@ export default class FilmsApiService extends ApiService {
       }
     };
 
+    delete adaptedFilm['film_info'].ageRating;
+    delete adaptedFilm['film_info'].alternativeTitle;
+    delete adaptedFilm['film_info'].totalRating;
+    delete adaptedFilm['film_info'].release.releaseCountry;
+    delete adaptedFilm['user_details'].alreadyWatched;
+    delete adaptedFilm['user_details'].watchingDate;
     delete adaptedFilm.filmInfo;
     delete adaptedFilm.userDetails;
-    delete adaptedFilm.filmInfo.ageRating;
-    delete adaptedFilm.filmInfo.alternativeTitle;
-    delete adaptedFilm.filmInfo.totalRating;
-    delete adaptedFilm.filmInfo.release.releaseCountry;
-    delete adaptedFilm.userDetails.alreadyWatched;
-    delete adaptedFilm.userDetails.watchingDate;
 
     return adaptedFilm;
   }
