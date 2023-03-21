@@ -8,24 +8,26 @@ const NoFilmsTextType = {
   [FilterType.FAVORITES]: 'There are no favorite movies now'
 };
 
-const createListEmptyTemplate = (isEmpty, filterType) => {
+const createListEmptyTemplate = (isEmpty, isLoading, filterType) => {
   const noFilmsTextValue = NoFilmsTextType[filterType];
   return(
-    isEmpty ? `<h2 class="films-list__title">${noFilmsTextValue}</h2>` : '<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>'
+    isEmpty ? `<h2 class="films-list__title">${noFilmsTextValue}</h2>` : `<h2 class="films-list__title ${isLoading ? '' : 'visually-hidden'}">All movies. Upcoming</h2>`
   );
 };
 
 export default class ListEmptyView extends AbstractView {
   #isEmpty = false;
+  #isLoading = null;
   #filterType = null;
 
-  constructor({isEmpty, filterType}) {
+  constructor({isEmpty, isLoading, filterType}) {
     super();
     this.#isEmpty = isEmpty;
+    this.#isLoading = isLoading;
     this.#filterType = filterType;
   }
 
   get template() {
-    return createListEmptyTemplate(this.#isEmpty, this.#filterType);
+    return createListEmptyTemplate(this.#isEmpty, this.#isLoading, this.#filterType);
   }
 }

@@ -27,6 +27,7 @@ export default class BoardPresenter {
   #filmPresenters = new Map();
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
   constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -63,6 +64,11 @@ export default class BoardPresenter {
   #renderBoard() {
     render(this.#boardComponent, this.#mainContainer);
 
+    if (this.#isLoading) {
+      this.#renderListEmpty(false, this.#isLoading);
+      return;
+    }
+
     const films = this.films;
     const filmCount = films.length;
 
@@ -71,7 +77,7 @@ export default class BoardPresenter {
     } else {
       this.#renderSort();
       render(this.#filmsListComponent, this.#filmsListContainer);
-      this.#renderListEmpty();
+      this.#renderListEmpty(false, this.#isLoading);
       this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
 
       if (filmCount > this.#renderedFilmCount) {
@@ -121,9 +127,10 @@ export default class BoardPresenter {
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.BEFOREBEGIN);
   }
 
-  #renderListEmpty(isEmpty) {
+  #renderListEmpty(isEmpty, isLoading) {
     this.#listEmptyComponent = new ListEmptyView({
       isEmpty: isEmpty,
+      isLoading: isLoading,
       filterType: this.#filterType
     });
 
@@ -176,6 +183,11 @@ export default class BoardPresenter {
         break;
       case UpdateType.MAJOR:
         this.#clearBoard({resetRenderedFilmCount: true, resetSortType: true});
+        this.#renderBoard();
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#listEmptyComponent);
         this.#renderBoard();
         break;
     }
