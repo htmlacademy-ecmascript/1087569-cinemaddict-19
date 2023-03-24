@@ -39,6 +39,7 @@ export default class BoardPresenter {
     this.#mainContainer = mainContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
+    //this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
@@ -160,12 +161,12 @@ export default class BoardPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentsModel.addComment(updateType, update.localComment);
+        this.#commentsModel.addComment(updateType, update);
         delete update.localComment;
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComment(updateType, update.commentId);
+        this.#commentsModel.deleteComment(updateType, update);
         delete update.commentId;
         this.#filmsModel.updateFilm(updateType, update);
         break;

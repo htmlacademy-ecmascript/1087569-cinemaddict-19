@@ -1,7 +1,7 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import { fixPopupScroll, deleteComment } from '../utils.js';
+import { fixPopupScroll } from '../utils.js';
 import { Keys, Mode, UserAction, UpdateType } from '../consts.js';
 
 export default class FilmPresenter {
@@ -218,7 +218,6 @@ export default class FilmPresenter {
       UpdateType.PATCH,
       {
         ...this.#film,
-        comments: deleteComment([...this.#film.comments], commentId),
         commentId: commentId
       }
     );

@@ -1,7 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { formatDuration, formatReleaseFilm, formatCommentDate, fixPopupScroll } from '../utils.js';
 import { COMMENT_EMOTIONS } from '../consts.js';
-import { nanoid } from 'nanoid';
 import he from 'he';
 
 const createCommentsListTemplate = (comments) => (`
@@ -242,15 +241,10 @@ export default class FilmPopupView extends AbstractStatefulView {
   }
 
   static parseStateToUpdate(state) {
-    const newCommentId = nanoid();
-    state.comments.push(newCommentId);
     const film = {
       ...state,
       localComment: {
-        id: newCommentId,
-        author: 'Movie Buff',
         comment: state.localComment.comment,
-        date: '2022-05-11T00:00:00.000Z',
         emotion: state.localComment.emotion
       }
     };

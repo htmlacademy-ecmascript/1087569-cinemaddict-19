@@ -21,27 +21,32 @@ export default class CommentsModel extends Observable {
     }
   }
 
-  addComment(updateType, update) {
-    this.#comments = [
-      update,
-      ...this.#comments
-    ];
-
-    this._notify(updateType, update);
+  async addComment(updateType, update) {
+    try {
+      const newComment = await this.#filmsApiService.addComment(update.localComment, update.id);
+      this.#comments = [newComment, ...this.#comments];
+      this._notify(updateType, update);
+    } catch(err) {
+      throw new Error('Can\'t add comment');
+    }
   }
 
-  deleteComment(updateType, update) {
-    const index = this.#comments.findIndex((comment) => comment.id === update);
+  async deleteComment(updateType, update) {
+    const index = this.#comments.findIndex((comment) => comment.id === update.commentId);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting task');
     }
 
-    this.#comments = [
-      ...this.#comments.slice(0, index),
-      ...this.#comments.slice(index + 1)
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#filmsApiService.deleteComment(update.commentId);
+      this.#comments = [
+        ...this.#comments.slice(0, index),
+        ...this.#comments.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete comment');
+    }
   }
 }

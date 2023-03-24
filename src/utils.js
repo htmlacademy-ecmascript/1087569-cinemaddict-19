@@ -65,10 +65,4 @@ const sortRatingDown = (filmA, filmB) => {
 
 const fixPopupScroll = (popup, coordY) => popup.scrollTo(0, coordY);
 
-const deleteComment = (comments, commentId) => {
-  const index = comments.findIndex((comment) => comment === commentId);
-  comments.splice(index, 1);
-  return comments;
-};
-
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, deleteComment, filter };
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, filter };
