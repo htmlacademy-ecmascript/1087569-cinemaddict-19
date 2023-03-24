@@ -23,7 +23,7 @@ export default class FilmPresenter {
     this.#handleModeChange = onModeChange;
   }
 
-  init(film) {
+  async init(film) {
     this.#film = film;
 
     const prevFilmCardComponent = this.#filmCardComponent;
@@ -49,6 +49,7 @@ export default class FilmPresenter {
     if (this.#mode === Mode.EDITING) {
       const currYcoord = prevFilmPopupComponent.element.scrollTop;
       replace(this.#filmCardComponent, prevFilmCardComponent);
+      await this.#createPopupComponent();
       replace(this.#filmPopupComponent, prevFilmPopupComponent);
       fixPopupScroll(this.#filmPopupComponent.element, currYcoord);
     }
@@ -66,8 +67,21 @@ export default class FilmPresenter {
   }
 
   async #addPopup() {
-    const comments = await this.#getComments();
     this.#bodyContainer.classList.add('hide-overflow');
+    await this.#createPopupComponent();
+    this.#bodyContainer.append(this.#filmPopupComponent.element);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#combinationKeyDownHandler);
+    this.#mode = Mode.EDITING;
+  }
+
+  async #getComments() {
+    await this.#commentsModel.init(this.#film.id);
+    return this.#commentsModel.comments;
+  }
+
+  async #createPopupComponent() {
+    const comments = await this.#getComments();
     this.#filmPopupComponent = new FilmPopupView({
       film: this.#film,
       commentsForFilm: comments,
@@ -77,17 +91,6 @@ export default class FilmPresenter {
       onFavoriteClick: this.#handleFavoriteClick,
       onDeleteClick: this.#handleDeleteClick
     });
-
-    this.#bodyContainer.append(this.#filmPopupComponent.element);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
-    document.addEventListener('keydown', this.#combinationKeyDownHandler);
-    this.#handleModeChange();
-    this.#mode = Mode.EDITING;
-  }
-
-  async #getComments() {
-    await this.#commentsModel.init(this.#film.id);
-    return this.#commentsModel.comments;
   }
 
   #removePopup() {
@@ -111,6 +114,7 @@ export default class FilmPresenter {
   };
 
   #handleCardClick = () => {
+    this.#handleModeChange();
     this.#addPopup();
   };
 
