@@ -3,7 +3,7 @@ import { formatDuration, formatReleaseFilm, formatCommentDate, fixPopupScroll } 
 import { COMMENT_EMOTIONS } from '../consts.js';
 import he from 'he';
 
-const createCommentsListTemplate = (comments) => (`
+const createCommentsListTemplate = (comments, isDeleting, isSaving) => (`
   <ul class="film-details__comments-list">${comments.map((comment) => (`
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -14,21 +14,30 @@ const createCommentsListTemplate = (comments) => (`
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
-          <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
+          <button
+            class="film-details__comment-delete"
+            data-comment-id="${comment.id}"
+            ${isSaving || isDeleting ? 'disabled' : ''}
+            >${isDeleting ? 'Deleting' : 'Delete'}</button>
         </p>
       </div>
     </li>`)).join('')}
   </ul>`
 );
 
-const createNewCommentTemplate = (currentEmotion, currentComment) => (`
+const createNewCommentTemplate = (currentEmotion, currentComment, isSaving, isDeleting) => (`
   <form class="film-details__new-comment" action="" method="get">
     <div class="film-details__add-emoji-label">
       ${currentEmotion ? `<img src="./images/emoji/${currentEmotion}.png" width="55" height="55" alt="emoji" data-emotion=${currentEmotion}>` : ''}
     </div>
 
     <label class="film-details__comment-label">
-      <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${he.encode(currentComment ? currentComment : '')}</textarea>
+      <textarea
+      class="film-details__comment-input"
+      placeholder="Select reaction below and write comment here"
+      name="comment"
+      ${isSaving || isDeleting ? 'disabled' : ''}>
+      ${he.encode(currentComment ? currentComment : '')}</textarea>
     </label>
 
     <div class="film-details__emoji-list">${COMMENT_EMOTIONS.map((emotion) => `
@@ -38,7 +47,8 @@ const createNewCommentTemplate = (currentEmotion, currentComment) => (`
         type="radio"
         id="emoji-${emotion}"
         value="${emotion}"
-        ${currentEmotion === emotion ? 'checked' : ''}>
+        ${currentEmotion === emotion ? 'checked' : ''}
+        ${isSaving || isDeleting ? 'disabled' : ''}>
       <label class="film-details__emoji-label" for="emoji-${emotion}">
         <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji" data-emotion=${emotion}>
       </label>`).join('')}
@@ -47,16 +57,16 @@ const createNewCommentTemplate = (currentEmotion, currentComment) => (`
 `);
 
 const createFilmPopupTemplate = (film) => {
-  const {filmInfo, userDetails, localComment, commentsForFilm} = film;
-  const commentsTemplate = createCommentsListTemplate(commentsForFilm);
-  const newCommentTemplate = createNewCommentTemplate(localComment.emotion, localComment.comment);
+  const {filmInfo, userDetails, localComment, commentsForFilm, isDeleting, isSaving} = film;
+  const commentsTemplate = createCommentsListTemplate(commentsForFilm, isDeleting, isSaving);
+  const newCommentTemplate = createNewCommentTemplate(localComment.emotion, localComment.comment, isSaving, isDeleting);
 
   return(`
     <section class="film-details">
       <div class="film-details__inner">
         <div class="film-details__top-container">
           <div class="film-details__close">
-            <button class="film-details__close-btn" type="button">close</button>
+            <button class="film-details__close-btn" type="button" ${isSaving || isDeleting ? 'disabled' : ''}>close</button>
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
@@ -236,7 +246,9 @@ export default class FilmPopupView extends AbstractStatefulView {
         comment: null,
         emotion: null
       },
-      commentsForFilm: comments
+      commentsForFilm: comments,
+      isDeleting: false,
+      isSaving: false
     };
   }
 
@@ -251,6 +263,8 @@ export default class FilmPopupView extends AbstractStatefulView {
 
 
     delete film.commentsForFilm;
+    delete film.isDeleting;
+    delete film.isSaving;
     return film;
   }
 }
