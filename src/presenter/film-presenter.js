@@ -66,6 +66,22 @@ export default class FilmPresenter {
     remove(this.#filmPopupComponent);
   }
 
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#filmPopupComponent.updateElement({
+        isSaving: true
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#filmPopupComponent.updateElement({
+        isDeleting: true
+      });
+    }
+  }
+
   async #addPopup() {
     this.#bodyContainer.classList.add('hide-overflow');
     await this.#createPopupComponent();

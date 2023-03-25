@@ -158,14 +158,17 @@ export default class BoardPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
+        this.#filmPresenters.get(update.id).setSaving();
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
+        this.#filmPresenters.get(update.id).setSaving();
         this.#commentsModel.addComment(updateType, update);
         delete update.localComment;
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
+        this.#filmPresenters.get(update.id).setDeleting();
         this.#commentsModel.deleteComment(updateType, update);
         delete update.commentId;
         this.#filmsModel.updateFilm(updateType, update);
