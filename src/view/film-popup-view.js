@@ -3,9 +3,9 @@ import { formatDuration, formatReleaseFilm, formatCommentDate, fixPopupScroll } 
 import { COMMENT_EMOTIONS } from '../consts.js';
 import he from 'he';
 
-const createCommentsListTemplate = (comments, isDeleting, isSaving) => (`
+const createCommentsListTemplate = (comments, isDeleting, isSaving, deletingCommentId) => (`
   <ul class="film-details__comments-list">${comments.map((comment) => (`
-    <li class="film-details__comment">
+    <li class="film-details__comment" data-comment-id="${comment.id}">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
       </span>
@@ -18,7 +18,7 @@ const createCommentsListTemplate = (comments, isDeleting, isSaving) => (`
             class="film-details__comment-delete"
             data-comment-id="${comment.id}"
             ${isSaving || isDeleting ? 'disabled' : ''}
-            >${isDeleting ? 'Deleting' : 'Delete'}</button>
+            >${isDeleting && deletingCommentId === comment.id ? 'Deleting' : 'Delete'}</button>
         </p>
       </div>
     </li>`)).join('')}
@@ -33,11 +33,11 @@ const createNewCommentTemplate = (currentEmotion, currentComment, isSaving, isDe
 
     <label class="film-details__comment-label">
       <textarea
-      class="film-details__comment-input"
-      placeholder="Select reaction below and write comment here"
-      name="comment"
-      ${isSaving || isDeleting ? 'disabled' : ''}>
-      ${he.encode(currentComment ? currentComment : '')}</textarea>
+        class="film-details__comment-input"
+        placeholder="Select reaction below and write comment here"
+        name="comment"
+        ${isSaving || isDeleting ? 'disabled' : ''}
+        >${he.encode(currentComment ? currentComment : '')}</textarea>
     </label>
 
     <div class="film-details__emoji-list">${COMMENT_EMOTIONS.map((emotion) => `
@@ -57,8 +57,8 @@ const createNewCommentTemplate = (currentEmotion, currentComment, isSaving, isDe
 `);
 
 const createFilmPopupTemplate = (film) => {
-  const {filmInfo, userDetails, localComment, commentsForFilm, isDeleting, isSaving} = film;
-  const commentsTemplate = createCommentsListTemplate(commentsForFilm, isDeleting, isSaving);
+  const {filmInfo, userDetails, localComment, commentsForFilm, isDeleting, isSaving, deletingCommentId} = film;
+  const commentsTemplate = createCommentsListTemplate(commentsForFilm, isDeleting, isSaving, deletingCommentId);
   const newCommentTemplate = createNewCommentTemplate(localComment.emotion, localComment.comment, isSaving, isDeleting);
 
   return(`
@@ -169,6 +169,18 @@ export default class FilmPopupView extends AbstractStatefulView {
     return createFilmPopupTemplate(this._state);
   }
 
+  get userControlsTemplate() {
+    return this.element.querySelector('.film-details__controls');
+  }
+
+  get newCommentTemplate() {
+    return this.element.querySelector('.film-details__new-comment');
+  }
+
+  getDeletingCommentTemplate(commentId) {
+    return this.element.querySelector(`li[data-comment-id="${commentId}"]`);
+  }
+
   _restoreHandlers() {
     this.element.querySelector('.film-details__close-btn')
       .addEventListener('click', this.#clickHandler);
@@ -248,7 +260,8 @@ export default class FilmPopupView extends AbstractStatefulView {
       },
       commentsForFilm: comments,
       isDeleting: false,
-      isSaving: false
+      isSaving: false,
+      deletingCommentId: null
     };
   }
 
@@ -265,6 +278,7 @@ export default class FilmPopupView extends AbstractStatefulView {
     delete film.commentsForFilm;
     delete film.isDeleting;
     delete film.isSaving;
+    delete film.deletingCommentId;
     return film;
   }
 }

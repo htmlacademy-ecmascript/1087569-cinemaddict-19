@@ -39,7 +39,6 @@ export default class BoardPresenter {
     this.#mainContainer = mainContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
-    //this.#commentsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
   }
 
@@ -155,23 +154,36 @@ export default class BoardPresenter {
     this.#filmPresenters.set(film.id, filmPresenter);
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update) => {
+    const commentId = update.commentId;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         this.#filmPresenters.get(update.id).setSaving();
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch(err) {
+          this.#filmPresenters.get(update.id).setAborting(actionType);
+        }
         break;
       case UserAction.ADD_COMMENT:
         this.#filmPresenters.get(update.id).setSaving();
-        this.#commentsModel.addComment(updateType, update);
-        delete update.localComment;
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#commentsModel.addComment(updateType, update);
+          delete update.localComment;
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch(err) {
+          this.#filmPresenters.get(update.id).setAborting(actionType);
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmPresenters.get(update.id).setDeleting();
-        this.#commentsModel.deleteComment(updateType, update);
-        delete update.commentId;
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#filmPresenters.get(update.id).setDeleting(commentId);
+        try {
+          await this.#commentsModel.deleteComment(updateType, update);
+          delete update.commentId;
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch(err) {
+          this.#filmPresenters.get(update.id).setAborting(actionType, commentId);
+        }
         break;
     }
   };

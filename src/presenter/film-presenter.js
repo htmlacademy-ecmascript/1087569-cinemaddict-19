@@ -68,17 +68,51 @@ export default class FilmPresenter {
 
   setSaving() {
     if (this.#mode === Mode.EDITING) {
+      const currYcoord = this.#filmPopupComponent.element.scrollTop;
       this.#filmPopupComponent.updateElement({
         isSaving: true
       });
+      fixPopupScroll(this.#filmPopupComponent.element, currYcoord);
     }
   }
 
-  setDeleting() {
+  setDeleting(commentId) {
     if (this.#mode === Mode.EDITING) {
+      const currYcoord = this.#filmPopupComponent.element.scrollTop;
       this.#filmPopupComponent.updateElement({
-        isDeleting: true
+        isDeleting: true,
+        deletingCommentId: commentId
       });
+      fixPopupScroll(this.#filmPopupComponent.element, currYcoord);
+    }
+  }
+
+  setAborting(actionType, commentId) {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#filmCardComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      const currYcoord = this.#filmPopupComponent.element.scrollTop;
+      this.#filmPopupComponent.updateElement({
+        isSaving: false,
+        isDeleting: false,
+        deletingCommentId: null
+      });
+      fixPopupScroll(this.#filmPopupComponent.element, currYcoord);
+    };
+
+    switch(actionType) {
+      case UserAction.UPDATE_FILM:
+        this.#shakeForElements(this.#filmPopupComponent.userControlsTemplate, resetFormState);
+        break;
+      case UserAction.ADD_COMMENT:
+        this.#shakeForElements(this.#filmPopupComponent.newCommentTemplate, resetFormState);
+        break;
+      case UserAction.DELETE_COMMENT:
+        this.#shakeForElements(this.#filmPopupComponent.getDeletingCommentTemplate(commentId), resetFormState);
+        break;
     }
   }
 
@@ -107,6 +141,16 @@ export default class FilmPresenter {
       onFavoriteClick: this.#handleFavoriteClick,
       onDeleteClick: this.#handleDeleteClick
     });
+  }
+
+  #shakeForElements(element, callback) {
+    const SHAKE_ANIMATION_TIMEOUT = 600;
+
+    element.classList.add('shake');
+    setTimeout(() => {
+      element.classList.remove('shake');
+      callback?.();
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   #removePopup() {
