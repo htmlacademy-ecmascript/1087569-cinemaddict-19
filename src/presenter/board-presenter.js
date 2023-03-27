@@ -1,5 +1,6 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import FilmPresenter from './film-presenter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import TopRatedView from '../view/top-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
@@ -7,7 +8,7 @@ import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import { sortDateDown, sortRatingDown, filter } from '../utils.js';
-import { SortType, UserAction, UpdateType, FilterType } from '../consts.js';
+import { SortType, UserAction, UpdateType, FilterType, TimeLimit } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -28,6 +29,10 @@ export default class BoardPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
   #isLoading = true;
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TimeLimit.LOWER_LIMIT,
+    upperLimit: TimeLimit.UPPER_LIMIT
+  });
 
   constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer}) {
     this.#boardComponent = boardComponent;
@@ -155,6 +160,7 @@ export default class BoardPresenter {
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     const commentId = update.commentId;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
@@ -186,6 +192,7 @@ export default class BoardPresenter {
         }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {

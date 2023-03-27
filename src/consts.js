@@ -46,4 +46,9 @@ const Method = {
   DELETE: 'DELETE'
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method };
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method, TimeLimit };
