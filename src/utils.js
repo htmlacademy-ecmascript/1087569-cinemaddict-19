@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
 import { FilterType } from './consts';
 
+// eslint-disable-next-line no-undef
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
+
 const DATE_YEAR_FORMAT = 'YYYY';
 const DATE_RELEASE_FORMAT = 'D MMMM YYYY';
-const DATE_COMMENT_FORMAT = 'YYYY/MM/D H:mm';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -17,7 +20,7 @@ const getRandomArrayElement = (arr) => arr[getRandomNumber(0, arr.length - 1)];
 
 const formatYearFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_YEAR_FORMAT) : '';
 const formatReleaseFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_RELEASE_FORMAT) : '';
-const formatCommentDate = (dateComment) => dateComment ? dayjs(dateComment).format(DATE_COMMENT_FORMAT) : '';
+const formatCommentDate = (dateComment) => dateComment ? dayjs(dateComment).fromNow() : '';
 
 const formatDuration = (duration) => {
   let hours = 0;
