@@ -1,7 +1,7 @@
 import { render, remove, replace } from '../framework/render.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmPopupView from '../view/film-popup-view.js';
-import { fixPopupScroll } from '../utils.js';
+import { fixPopupScroll, shakeForElement } from '../utils.js';
 import { Keys, Mode, UserAction, UpdateType } from '../consts.js';
 
 export default class FilmPresenter {
@@ -105,13 +105,13 @@ export default class FilmPresenter {
 
     switch(actionType) {
       case UserAction.UPDATE_FILM:
-        this.#shakeForElements(this.#filmPopupComponent.userControlsTemplate, resetFormState);
+        shakeForElement(this.#filmPopupComponent.userControlsTemplate, resetFormState);
         break;
       case UserAction.ADD_COMMENT:
-        this.#shakeForElements(this.#filmPopupComponent.newCommentTemplate, resetFormState);
+        shakeForElement(this.#filmPopupComponent.newCommentTemplate, resetFormState);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#shakeForElements(this.#filmPopupComponent.getDeletingCommentTemplate(commentId), resetFormState);
+        shakeForElement(this.#filmPopupComponent.getDeletingCommentTemplate(commentId), resetFormState);
         break;
     }
   }
@@ -141,16 +141,6 @@ export default class FilmPresenter {
       onFavoriteClick: this.#handleFavoriteClick,
       onDeleteClick: this.#handleDeleteClick
     });
-  }
-
-  #shakeForElements(element, callback) {
-    const SHAKE_ANIMATION_TIMEOUT = 600;
-
-    element.classList.add('shake');
-    setTimeout(() => {
-      element.classList.remove('shake');
-      callback?.();
-    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   #removePopup() {

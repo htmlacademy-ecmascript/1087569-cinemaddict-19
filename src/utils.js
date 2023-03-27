@@ -5,6 +5,8 @@ const DATE_YEAR_FORMAT = 'YYYY';
 const DATE_RELEASE_FORMAT = 'D MMMM YYYY';
 const DATE_COMMENT_FORMAT = 'YYYY/MM/D H:mm';
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -65,4 +67,12 @@ const sortRatingDown = (filmA, filmB) => {
 
 const fixPopupScroll = (popup, coordY) => popup.scrollTo(0, coordY);
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, filter };
+const shakeForElement = (element, callback) => {
+  element.classList.add('shake');
+  setTimeout(() => {
+    element.classList.remove('shake');
+    callback?.();
+  }, SHAKE_ANIMATION_TIMEOUT);
+};
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, filter, shakeForElement };
