@@ -68,6 +68,8 @@ const sortRatingDown = (filmA, filmB) => {
   return weight ?? filmB.filmInfo.totalRating - filmA.filmInfo.totalRating;
 };
 
+const sortCommentsCountDown = (filmA, filmB) => filmB.comments.length - filmA.comments.length;
+
 const fixPopupScroll = (popup, coordY) => popup.scrollTo(0, coordY);
 
 const shakeForElement = (element, callback) => {
@@ -78,4 +80,4 @@ const shakeForElement = (element, callback) => {
   }, SHAKE_ANIMATION_TIMEOUT);
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, fixPopupScroll, filter, shakeForElement };
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement };
