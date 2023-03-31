@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FilterType } from './consts';
+import { FilterType, CardExtraType } from './consts';
 
 // eslint-disable-next-line no-undef
 const relativeTime = require('dayjs/plugin/relativeTime');
@@ -17,6 +17,17 @@ const getRandomNumber = (min, max) => {
 };
 
 const getRandomArrayElement = (arr) => arr[getRandomNumber(0, arr.length - 1)];
+
+const getTwoRandomFilms = (films) => {
+  const randomFilms = [];
+  const firstFilm = getRandomArrayElement(films);
+  const index = films.findIndex(firstFilm);
+  films.splice(index, 1);
+  const secondFilm = getRandomArrayElement(films);
+  randomFilms.push(firstFilm);
+  randomFilms.push(secondFilm);
+  return randomFilms;
+};
 
 const formatYearFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_YEAR_FORMAT) : '';
 const formatReleaseFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_RELEASE_FORMAT) : '';
@@ -80,4 +91,37 @@ const shakeForElement = (element, callback) => {
   }, SHAKE_ANIMATION_TIMEOUT);
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement };
+const generatePresenterId = (filmId, extraType) => {
+  switch(extraType) {
+    case CardExtraType.TOP_RATED:
+      return `${filmId}-${CardExtraType.TOP_RATED}`;
+    case CardExtraType.MOST_COMMENTED:
+      return `${filmId}-${CardExtraType.MOST_COMMENTED}`;
+    default:
+      return filmId;
+  }
+};
+
+const checkZeroRatings = (films) => {
+  const checkedFilms = films.slice().filter((film) => film.filmInfo.totalRating === 0);
+  return checkedFilms.length === films.length;
+};
+
+const checkZeroCountComments = (films) => {
+  const checkedFilms = films.slice().filter((film) => film.comments.length === 0);
+  return checkedFilms.length === films.length;
+};
+
+const checkEqualityRatings = (films) => {
+  const firstFilm = films[0];
+  const checkedFilms = films.slice().filter((film) => film.filmInfo.totalRating === firstFilm.filmInfo.totalRating);
+  return checkedFilms.length === films.length;
+};
+
+const checkEqualityCountComments = (films) => {
+  const firstFilm = films[0];
+  const checkedFilms = films.slice().filter((film) => film.comments.length === firstFilm.comments.length);
+  return checkedFilms.length === films.length;
+};
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms };

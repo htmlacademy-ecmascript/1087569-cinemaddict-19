@@ -11,16 +11,18 @@ export default class FilmPresenter {
   #filmCardComponent = null;
   #filmPopupComponent = null;
   #film = null;
+  #presenterId = null;
   #mode = Mode.DEFAULT;
   #handleDataChange = null;
   #handleModeChange = null;
 
-  constructor({filmsListContainer, commentsModel, bodyContainer, onDataChange, onModeChange}) {
+  constructor({filmsListContainer, commentsModel, bodyContainer, onDataChange, onModeChange, presenterId}) {
     this.#filmsListContainer = filmsListContainer;
     this.#commentsModel = commentsModel;
     this.#bodyContainer = bodyContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#presenterId = presenterId;
   }
 
   async init(film) {
@@ -37,7 +39,7 @@ export default class FilmPresenter {
       onFavoriteClick: this.#handleFavoriteClick
     });
 
-    if (prevFilmCardComponent === null || prevFilmPopupComponent === null) {
+    if (prevFilmCardComponent === null && prevFilmPopupComponent === null) {
       render(this.#filmCardComponent, this.#filmsListContainer);
       return;
     }
@@ -159,7 +161,8 @@ export default class FilmPresenter {
       this.#handleDataChange(
         UserAction.UPDATE_FILM,
         UpdateType.MINOR,
-        this.#film
+        this.#film,
+        this.#presenterId
       );
     }
   };
@@ -175,7 +178,8 @@ export default class FilmPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
-      this.#film
+      this.#film,
+      this.#presenterId
     );
   };
 
@@ -190,7 +194,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             watchlist: !this.#film.userDetails.watchlist,
           }
-        }
+        },
+        this.#presenterId
       );
     } else {
       this.#handleDataChange(
@@ -202,7 +207,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             watchlist: !this.#film.userDetails.watchlist,
           }
-        }
+        },
+        this.#presenterId
       );
     }
   };
@@ -218,7 +224,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             alreadyWatched: !this.#film.userDetails.alreadyWatched
           }
-        }
+        },
+        this.#presenterId
       );
     } else {
       this.#handleDataChange(
@@ -230,7 +237,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             alreadyWatched: !this.#film.userDetails.alreadyWatched
           }
-        }
+        },
+        this.#presenterId
       );
     }
   };
@@ -246,7 +254,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             favorite: !this.#film.userDetails.favorite
           }
-        }
+        },
+        this.#presenterId
       );
     } else {
       this.#handleDataChange(
@@ -258,7 +267,8 @@ export default class FilmPresenter {
             ...this.#film.userDetails,
             favorite: !this.#film.userDetails.favorite
           }
-        }
+        },
+        this.#presenterId
       );
     }
   };
@@ -270,7 +280,8 @@ export default class FilmPresenter {
       {
         ...this.#film,
         commentId: commentId
-      }
+      },
+      this.#presenterId
     );
   };
 
@@ -288,7 +299,8 @@ export default class FilmPresenter {
       this.#handleDataChange(
         UserAction.ADD_COMMENT,
         UpdateType.PATCH,
-        update
+        update,
+        this.#presenterId
       );
       document.removeEventListener('keydown', this.#secondButtonKeyDownHandler);
     } else {

@@ -51,4 +51,9 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method, TimeLimit };
+const CardExtraType = {
+  TOP_RATED: 'top',
+  MOST_COMMENTED: 'most'
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method, TimeLimit, CardExtraType };

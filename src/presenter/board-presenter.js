@@ -7,8 +7,8 @@ import MostCommentedView from '../view/most-commented-view.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
-import { sortDateDown, sortRatingDown, sortCommentsCountDown, filter } from '../utils.js';
-import { SortType, UserAction, UpdateType, FilterType, TimeLimit } from '../consts.js';
+import { sortDateDown, sortRatingDown, sortCommentsCountDown, filter, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms } from '../utils.js';
+import { SortType, UserAction, UpdateType, FilterType, TimeLimit, CardExtraType } from '../consts.js';
 
 const FILM_COUNT_PER_STEP = 5;
 
@@ -81,8 +81,6 @@ export default class BoardPresenter {
 
     const films = this.films;
     const filmCount = films.length;
-    const topRatedFilms = films.slice().sort(sortRatingDown).slice(0, 2);
-    const mostCommentedFilms = films.slice().sort(sortCommentsCountDown).slice(0, 2);
 
     if (filmCount === 0) {
       this.#renderListEmpty(true);
@@ -90,12 +88,6 @@ export default class BoardPresenter {
       this.#renderSort();
       render(this.#filmsListComponent, this.#filmsListContainer);
       this.#renderListEmpty(false, this.#isLoading);
-      //Отрисовываем view TopRated и помещаем туда view списка фильмов
-      render(this.#topRatedComponent, this.#boardComponent.element);
-      render(this.#topRatedListComponent, this.#topRatedComponent.element);
-      //MostCommented
-      render(this.#mostCommentedComponent, this.#boardComponent.element);
-      render(this.#mostCommentedListComponent, this.#mostCommentedComponent.element);
 
       this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
 
@@ -103,8 +95,21 @@ export default class BoardPresenter {
         this.#renderShowMoreButton();
       }
 
-      //this.#renderFilms(topRatedFilms);
-      //this.#renderFilms(mostCommentedFilms);
+      if (!checkZeroRatings(films)) {
+        let topRatedFilms = films.slice().sort(sortRatingDown).slice(0, 2);
+        if (checkEqualityRatings(films)) {
+          topRatedFilms = getTwoRandomFilms(films);
+        }
+        this.#renderTopRatedSection(topRatedFilms);
+      }
+
+      if (!checkZeroCountComments(films)) {
+        let mostCommentedFilms = films.slice().sort(sortCommentsCountDown).slice(0, 2);
+        if (checkEqualityCountComments(films)) {
+          mostCommentedFilms = getTwoRandomFilms(films);
+        }
+        this.#renderMostCommentedSection(mostCommentedFilms);
+      }
     }
   }
 
@@ -129,11 +134,6 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
     }
-  }
-
-  #checkTopRated(filmId) {
-    const topRatedIds = this.films.slice().sort(sortRatingDown).slice(0, 2).map((item) => item.id);
-    return topRatedIds.includes(filmId);
   }
 
   #renderShowMoreButton() {
@@ -163,53 +163,67 @@ export default class BoardPresenter {
     render(this.#listEmptyComponent, this.#filmsListContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #renderFilms(films) {
-    films.forEach((film) => this.#renderFilm(film));
+  #renderTopRatedSection(topRatedFilms) {
+    render(this.#topRatedComponent, this.#boardComponent.element);
+    render(this.#topRatedListComponent, this.#topRatedComponent.element);
+    this.#renderFilms(topRatedFilms, CardExtraType.TOP_RATED);
   }
 
-  #renderFilm(film) {
+  #renderMostCommentedSection(mostCommentedFilms) {
+    render(this.#mostCommentedComponent, this.#boardComponent.element);
+    render(this.#mostCommentedListComponent, this.#mostCommentedComponent.element);
+    this.#renderFilms(mostCommentedFilms, CardExtraType.MOST_COMMENTED);
+  }
+
+  #renderFilms(films, extraType) {
+    films.forEach((film) => this.#renderFilm(film, extraType));
+  }
+
+  #renderFilm(film, extraType) {
+    const presenterId = generatePresenterId(film.id, extraType);
     const filmPresenter = new FilmPresenter({
-      filmsListContainer: this.#filmsListComponent.element,
+      filmsListContainer: this.#getFilmsContainer(extraType),
       commentsModel: this.#commentsModel,
       bodyContainer: this.#bodyContainer,
       onDataChange: this.#handleViewAction,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
+      presenterId: presenterId
     });
 
     filmPresenter.init(film);
-    this.#filmPresenters.set(film.id, filmPresenter);
+    this.#filmPresenters.set(presenterId, filmPresenter);
   }
 
-  #handleViewAction = async (actionType, updateType, update) => {
+  #handleViewAction = async (actionType, updateType, update, presenterId) => {
     this.#uiBlocker.block();
     const commentId = update.commentId;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this.#filmPresenters.get(update.id).setSaving();
+        this.#filmPresenters.get(presenterId).setSaving();
         try {
-          await this.#filmsModel.updateFilm(updateType, update);
+          await this.#filmsModel.updateFilm(updateType, update, presenterId);
         } catch(err) {
-          this.#filmPresenters.get(update.id).setAborting(actionType);
+          this.#filmPresenters.get(presenterId).setAborting(actionType);
         }
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmPresenters.get(update.id).setSaving();
+        this.#filmPresenters.get(presenterId).setSaving();
         try {
           await this.#commentsModel.addComment(updateType, update);
           delete update.localComment;
-          await this.#filmsModel.updateFilm(updateType, update);
+          await this.#filmsModel.updateFilm(updateType, update, presenterId);
         } catch(err) {
-          this.#filmPresenters.get(update.id).setAborting(actionType);
+          this.#filmPresenters.get(presenterId).setAborting(actionType);
         }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmPresenters.get(update.id).setDeleting(commentId);
+        this.#filmPresenters.get(presenterId).setDeleting(commentId);
         try {
           await this.#commentsModel.deleteComment(updateType, update);
           delete update.commentId;
-          await this.#filmsModel.updateFilm(updateType, update);
+          await this.#filmsModel.updateFilm(updateType, update, presenterId);
         } catch(err) {
-          this.#filmPresenters.get(update.id).setAborting(actionType, commentId);
+          this.#filmPresenters.get(presenterId).setAborting(actionType, commentId);
         }
         break;
     }
@@ -219,7 +233,7 @@ export default class BoardPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmPresenters.get(data.id).init(data);
+        this.#filmPresenters.get(data.presenterId).init(data.updatedFilm);
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -234,6 +248,17 @@ export default class BoardPresenter {
         remove(this.#listEmptyComponent);
         this.#renderBoard();
         break;
+    }
+  };
+
+  #getFilmsContainer = (extraType) => {
+    switch(extraType) {
+      case CardExtraType.TOP_RATED:
+        return this.#topRatedListComponent.element;
+      case CardExtraType.MOST_COMMENTED:
+        return this.#mostCommentedListComponent.element;
+      default:
+        return this.#filmsListComponent.element;
     }
   };
 
