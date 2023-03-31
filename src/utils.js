@@ -1,8 +1,7 @@
 import dayjs from 'dayjs';
 import { FilterType, CardExtraType } from './consts';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
-// eslint-disable-next-line no-undef
-const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const DATE_YEAR_FORMAT = 'YYYY';
@@ -70,7 +69,6 @@ const getWeightForNull = (dataA, dataB) => {
 
 const sortDateDown = (filmA, filmB) => {
   const weight = getWeightForNull(filmA.filmInfo.release.date, filmB.filmInfo.release.date);
-
   return weight ?? dayjs(filmB.filmInfo.release.date).diff(dayjs(filmA.filmInfo.release.date));
 };
 
