@@ -2,6 +2,7 @@ import { render, RenderPosition, remove } from '../framework/render.js';
 import FilmPresenter from './film-presenter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import UserProfileView from '../view/user-profile-view.js';
+import FilmsCountView from '../view/films-count-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import TopRatedView from '../view/top-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
@@ -23,6 +24,8 @@ export default class BoardPresenter {
   #bodyContainer = null;
   #mainContainer = null;
   #headerContainer = null;
+  #filmsCountContainer = null;
+  #filmsCountComponent = null;
   #userProfileComponent = null;
   #filmsListComponent = new FilmsListView();
   #topRatedListComponent = new FilmsListView();
@@ -41,7 +44,7 @@ export default class BoardPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer, headerContainer}) {
+  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer, headerContainer, filmsCountContainer}) {
     this.#boardComponent = boardComponent;
     this.#filmsListContainer = filmsListContainer;
     this.#filmsModel = filmsModel;
@@ -50,6 +53,7 @@ export default class BoardPresenter {
     this.#bodyContainer = bodyContainer;
     this.#mainContainer = mainContainer;
     this.#headerContainer = headerContainer;
+    this.#filmsCountContainer = filmsCountContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -118,6 +122,8 @@ export default class BoardPresenter {
         }
         this.#renderMostCommentedSection(mostCommentedFilms);
       }
+
+      this.#renderFilmsCount(filmsCount);
     }
   }
 
@@ -133,6 +139,7 @@ export default class BoardPresenter {
     remove(this.#showMoreButtonComponent);
     remove(this.#topRatedComponent);
     remove(this.#mostCommentedComponent);
+    remove(this.#filmsCountComponent);
 
     if (resetRenderedFilmCount) {
       this.#renderedFilmCount = FILM_COUNT_PER_STEP;
@@ -148,6 +155,11 @@ export default class BoardPresenter {
   #renderUserProfile(filmsCount) {
     this.#userProfileComponent = new UserProfileView(filmsCount);
     render(this.#userProfileComponent, this.#headerContainer);
+  }
+
+  #renderFilmsCount(filmsCount) {
+    this.#filmsCountComponent = new FilmsCountView(filmsCount);
+    render(this.#filmsCountComponent, this.#filmsCountContainer);
   }
 
   #renderShowMoreButton() {

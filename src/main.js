@@ -1,6 +1,4 @@
-import { render } from './framework/render.js';
 import BoardView from './view/board-view.js';
-import FilmsCountView from './view/films-count-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import FilmsModel from './model/films-model.js';
@@ -39,10 +37,10 @@ const boardPresenter = new BoardPresenter({
   filtersModel,
   bodyContainer: bodyContainer,
   mainContainer: mainContainer,
-  headerContainer: headerContainer
+  headerContainer: headerContainer,
+  filmsCountContainer: filmsCountContainer
 });
 
 filterPresenter.init();
 boardPresenter.init();
 filmsModel.init();
-render(new FilmsCountView(), filmsCountContainer);
