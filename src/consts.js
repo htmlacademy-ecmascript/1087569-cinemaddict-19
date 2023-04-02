@@ -56,4 +56,10 @@ const CardExtraType = {
   MOST_COMMENTED: 'most'
 };
 
-export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method, TimeLimit, CardExtraType };
+const UserRank = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff'
+};
+
+export { COMMENT_EMOTIONS, Keys, FilterType, SortType, Mode, UserAction, UpdateType, Method, TimeLimit, CardExtraType, UserRank };

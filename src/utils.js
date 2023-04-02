@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FilterType, CardExtraType } from './consts';
+import { FilterType, CardExtraType, UserRank } from './consts';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
@@ -122,4 +122,12 @@ const checkEqualityCountComments = (films) => {
   return checkedFilms.length === films.length;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms };
+const getUserRank = (filmsCount) => {
+  if (filmsCount >= 1 && filmsCount <= 10) {
+    return UserRank.NOVICE;
+  }
+
+  return filmsCount >= 11 && filmsCount <= 20 ? UserRank.FAN : UserRank.MOVIE_BUFF;
+};
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms, getUserRank };

@@ -1,6 +1,7 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import FilmPresenter from './film-presenter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import UserProfileView from '../view/user-profile-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import TopRatedView from '../view/top-rated-view.js';
 import MostCommentedView from '../view/most-commented-view.js';
@@ -21,6 +22,8 @@ export default class BoardPresenter {
   #filtersModel = null;
   #bodyContainer = null;
   #mainContainer = null;
+  #headerContainer = null;
+  #userProfileComponent = null;
   #filmsListComponent = new FilmsListView();
   #topRatedListComponent = new FilmsListView();
   #mostCommentedListComponent = new FilmsListView();
@@ -38,7 +41,7 @@ export default class BoardPresenter {
     upperLimit: TimeLimit.UPPER_LIMIT
   });
 
-  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer}) {
+  constructor ({boardComponent, filmsListContainer, filmsModel, commentsModel, filtersModel, bodyContainer, mainContainer, headerContainer}) {
     this.#boardComponent = boardComponent;
     this.#filmsListContainer = filmsListContainer;
     this.#filmsModel = filmsModel;
@@ -46,6 +49,7 @@ export default class BoardPresenter {
     this.#filtersModel = filtersModel;
     this.#bodyContainer = bodyContainer;
     this.#mainContainer = mainContainer;
+    this.#headerContainer = headerContainer;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filtersModel.addObserver(this.#handleModelEvent);
@@ -80,18 +84,22 @@ export default class BoardPresenter {
     }
 
     const films = this.films;
-    const filmCount = films.length;
+    const filmsCount = films.length;
+    const watchedFilmsCount = filter[FilterType.HISTORY](films).length;
 
-    if (filmCount === 0) {
+    if (filmsCount === 0) {
       this.#renderListEmpty(true);
     } else {
+      if (watchedFilmsCount !== 0) {
+        this.#renderUserProfile(watchedFilmsCount);
+      }
       this.#renderSort();
       render(this.#filmsListComponent, this.#filmsListContainer);
       this.#renderListEmpty(false, this.#isLoading);
 
-      this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
+      this.#renderFilms(films.slice(0, Math.min(filmsCount, this.#renderedFilmCount)));
 
-      if (filmCount > this.#renderedFilmCount) {
+      if (filmsCount > this.#renderedFilmCount) {
         this.#renderShowMoreButton();
       }
 
@@ -119,6 +127,7 @@ export default class BoardPresenter {
     this.#filmPresenters.forEach((presenter) => presenter.destroy());
     this.#filmPresenters.clear();
 
+    remove(this.#userProfileComponent);
     remove(this.#sortComponent);
     remove(this.#listEmptyComponent);
     remove(this.#showMoreButtonComponent);
@@ -134,6 +143,11 @@ export default class BoardPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
     }
+  }
+
+  #renderUserProfile(filmsCount) {
+    this.#userProfileComponent = new UserProfileView(filmsCount);
+    render(this.#userProfileComponent, this.#headerContainer);
   }
 
   #renderShowMoreButton() {

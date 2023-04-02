@@ -1,6 +1,5 @@
 import { render } from './framework/render.js';
 import BoardView from './view/board-view.js';
-import UserProfileView from './view/user-profile-view.js';
 import FilmsCountView from './view/films-count-view.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
@@ -39,10 +38,10 @@ const boardPresenter = new BoardPresenter({
   commentsModel,
   filtersModel,
   bodyContainer: bodyContainer,
-  mainContainer: mainContainer
+  mainContainer: mainContainer,
+  headerContainer: headerContainer
 });
 
-render(new UserProfileView(), headerContainer);
 filterPresenter.init();
 boardPresenter.init();
 filmsModel.init();
