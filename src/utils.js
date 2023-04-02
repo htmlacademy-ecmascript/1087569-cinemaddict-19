@@ -34,15 +34,15 @@ const formatReleaseFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_R
 const formatCommentDate = (dateComment) => dateComment ? dayjs(dateComment).fromNow() : '';
 
 const formatDuration = (duration) => {
-  let hours = 0;
-  let minutes = 0;
-  if (duration % 60 > 0) {
+  if (duration / 60 > 1) {
+    let hours = 0;
+    let minutes = 0;
     hours = Math.floor(duration / 60);
     minutes = duration % 60;
     return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
   }
+
+  return `${duration}m`;
 };
 
 const filter = {
