@@ -1,8 +1,9 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { formatYearFilm, formatDuration } from '../utils.js';
+import { formatYearFilm, formatDuration, getClippedDescription } from '../utils.js';
 
 const createFilmCardTemplate = (film) => {
   const {comments, filmInfo, userDetails} = film;
+  const description = filmInfo.description;
   return(`
     <article class="film-card">
       <a class="film-card__link">
@@ -14,7 +15,7 @@ const createFilmCardTemplate = (film) => {
           <span class="film-card__genre">${filmInfo.genre[0]}</span>
         </p>
         <img src="./${filmInfo.poster}" alt="" class="film-card__poster">
-          <p class="film-card__description">${filmInfo.description}</p>
+          <p class="film-card__description">${description.length > 140 ? getClippedDescription(description) : description}</p>
           <span class="film-card__comments">${comments.length > 1 || comments.length === 0 ? `${comments.length} comments` : `${comments.length} comment`}</span>
       </a>
       <div class="film-card__controls">

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { FilterType, CardExtraType } from './consts';
+import { FilterType, CardExtraType, UserRank } from './consts';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
@@ -8,6 +8,7 @@ const DATE_YEAR_FORMAT = 'YYYY';
 const DATE_RELEASE_FORMAT = 'D MMMM YYYY';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const MAX_DESCRIPTION_LENGTH = 139;
 
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
@@ -33,15 +34,15 @@ const formatReleaseFilm = (dateFilm) => dateFilm ? dayjs(dateFilm).format(DATE_R
 const formatCommentDate = (dateComment) => dateComment ? dayjs(dateComment).fromNow() : '';
 
 const formatDuration = (duration) => {
-  let hours = 0;
-  let minutes = 0;
-  if (duration % 60 > 0) {
+  if (duration / 60 > 1) {
+    let hours = 0;
+    let minutes = 0;
     hours = Math.floor(duration / 60);
     minutes = duration % 60;
     return `${hours}h ${minutes}m`;
-  } else {
-    return `${minutes}m`;
   }
+
+  return `${duration}m`;
 };
 
 const filter = {
@@ -122,4 +123,14 @@ const checkEqualityCountComments = (films) => {
   return checkedFilms.length === films.length;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms };
+const getUserRank = (filmsCount) => {
+  if (filmsCount >= 1 && filmsCount <= 10) {
+    return UserRank.NOVICE;
+  }
+
+  return filmsCount >= 11 && filmsCount <= 20 ? UserRank.FAN : UserRank.MOVIE_BUFF;
+};
+
+const getClippedDescription = (description) => `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`;
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms, getUserRank, getClippedDescription };

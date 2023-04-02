@@ -37,7 +37,7 @@ const createNewCommentTemplate = (currentEmotion, currentComment, isSaving, isDe
         placeholder="Select reaction below and write comment here"
         name="comment"
         ${isSaving || isDeleting ? 'disabled' : ''}
-        >${he.encode(currentComment ? currentComment : '')}</textarea>
+        >${currentComment ? currentComment : ''}</textarea>
     </label>
 
     <div class="film-details__emoji-list">${COMMENT_EMOTIONS.map((emotion) => `
@@ -269,7 +269,7 @@ export default class FilmPopupView extends AbstractStatefulView {
     const film = {
       ...state,
       localComment: {
-        comment: state.localComment.comment,
+        comment: he.encode(state.localComment.comment),
         emotion: state.localComment.emotion
       }
     };
