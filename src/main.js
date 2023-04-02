@@ -46,4 +46,3 @@ filterPresenter.init();
 boardPresenter.init();
 filmsModel.init();
 render(new FilmsCountView(), filmsCountContainer);
-

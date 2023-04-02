@@ -8,6 +8,7 @@ const DATE_YEAR_FORMAT = 'YYYY';
 const DATE_RELEASE_FORMAT = 'D MMMM YYYY';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const MAX_DESCRIPTION_LENGTH = 139;
 
 const getRandomNumber = (min, max) => {
   min = Math.ceil(min);
@@ -130,4 +131,6 @@ const getUserRank = (filmsCount) => {
   return filmsCount >= 11 && filmsCount <= 20 ? UserRank.FAN : UserRank.MOVIE_BUFF;
 };
 
-export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms, getUserRank };
+const getClippedDescription = (description) => `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...`;
+
+export { getRandomArrayElement, getRandomNumber, formatYearFilm, formatDuration, formatReleaseFilm, formatCommentDate, sortDateDown, sortRatingDown, sortCommentsCountDown, fixPopupScroll, filter, shakeForElement, generatePresenterId, checkZeroRatings, checkZeroCountComments, checkEqualityRatings, checkEqualityCountComments, getTwoRandomFilms, getUserRank, getClippedDescription };
