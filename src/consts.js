@@ -4,7 +4,7 @@ const Keys = {
   ESCAPE: 'Escape',
   ESC: 'Esc',
   CTRL: 'Control',
-  COMMAND: 'Command',
+  COMMAND: 'Meta',
   ENTER: 'Enter'
 };
 
